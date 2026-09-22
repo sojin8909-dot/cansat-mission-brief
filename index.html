@@ -19,6 +19,10 @@
     --accent-soft:#E3F1F1;
     --caution:#A6600C;
     --caution-soft:#F7ECDB;
+    --good:#2E7D46;
+    --good-soft:#E4F3E8;
+    --bad:#B3261E;
+    --bad-soft:#FBE7E5;
     --shadow: 0 1px 2px rgba(20,40,45,.06), 0 8px 24px rgba(20,40,45,.06);
   }
   @media (prefers-color-scheme: dark){
@@ -33,6 +37,10 @@
       --accent-soft:#122C2E;
       --caution:#F0AC55;
       --caution-soft:#2E2416;
+      --good:#6FD98A;
+      --good-soft:#17301F;
+      --bad:#FF8A80;
+      --bad-soft:#3A1613;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     }
   }
@@ -210,6 +218,29 @@
     border-top:1px solid var(--line);
     padding-top:16px;
   }
+
+  .ai-body{ padding:4px 20px 20px; display:flex; flex-direction:column; gap:16px; }
+  .ai-blurb{ margin:0; font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
+  .badge-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .badge{
+    display:inline-flex; align-items:center;
+    padding:6px 12px; border-radius:999px;
+    font-family:'IBM Plex Mono'; font-size:12.5px; font-weight:600;
+  }
+  .badge-good{ background:var(--good-soft); color:var(--good); }
+  .badge-warn{ background:var(--caution-soft); color:var(--caution); }
+  .badge-bad{ background:var(--bad-soft); color:var(--bad); }
+
+  .ai-block-title{ font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  .ai-text{ margin:0; font-size:14.5px; line-height:1.6; }
+  .ai-list{ margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.55; }
+  .ai-error{ color:var(--bad); font-size:13.5px; }
+
+  .polished-item{ display:flex; flex-direction:column; gap:4px; }
+  .polished-item .ai-block-title{ margin-bottom:0; }
+  .polished-item p{ margin:0; font-size:14.5px; line-height:1.6; }
+
+  button.primary:disabled{ opacity:.6; cursor:default; }
 </style>
 </head>
 <body>
@@ -295,6 +326,50 @@
         <button class="ghost" id="clearBtn" type="button">초기화</button>
       </div>
       <div class="status" id="statusMsg" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="card" id="aiSection">
+    <div class="preview-head">
+      <h2>AI 도우미</h2>
+      <span class="mono">다듬기 · 위험도 분석</span>
+    </div>
+    <div class="ai-body">
+      <p class="ai-blurb">적어둔 내용을 AI가 문장 다듬기 + 실현 가능성/위험 요소 분석을 해줍니다. 참고용이니 최종 판단은 팀에서 직접 내려주세요.</p>
+      <div>
+        <button class="primary" id="analyzeBtn" type="button">AI로 다듬고 분석하기</button>
+      </div>
+      <div id="aiEmpty" class="p-empty" style="font-size:13.5px;">아직 분석하지 않았습니다.</div>
+      <div id="aiError" class="ai-error" hidden></div>
+
+      <div id="aiResult" hidden style="display:flex; flex-direction:column; gap:20px;">
+        <div>
+          <div class="ai-block-title" style="font-size:13px; margin-bottom:10px;">다듬어진 아이디어</div>
+          <div id="polishedList" style="display:flex; flex-direction:column; gap:12px;"></div>
+          <div style="margin-top:12px;">
+            <button class="ghost" id="applyPolishedBtn" type="button">다듬은 내용으로 바꾸기</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="badge-row">
+            <span class="badge" id="feasBadge"></span>
+            <span class="badge" id="riskBadge"></span>
+          </div>
+        </div>
+        <div>
+          <div class="ai-block-title">실현 가능성 설명</div>
+          <p id="feasReason" class="ai-text"></p>
+        </div>
+        <div>
+          <div class="ai-block-title">예상 위험 요소</div>
+          <ul id="risksList" class="ai-list"></ul>
+        </div>
+        <div>
+          <div class="ai-block-title">보완 제안</div>
+          <ul id="suggestList" class="ai-list"></ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -437,6 +512,129 @@
 
     loadDraft();
     renderPreview();
+
+    // AI 도우미
+    var analyzeBtn = document.getElementById('analyzeBtn');
+    var aiEmpty = document.getElementById('aiEmpty');
+    var aiError = document.getElementById('aiError');
+    var aiResult = document.getElementById('aiResult');
+    var polishedList = document.getElementById('polishedList');
+    var applyPolishedBtn = document.getElementById('applyPolishedBtn');
+    var feasBadge = document.getElementById('feasBadge');
+    var feasReason = document.getElementById('feasReason');
+    var riskBadge = document.getElementById('riskBadge');
+    var risksList = document.getElementById('risksList');
+    var suggestList = document.getElementById('suggestList');
+    var lastPolished = null;
+
+    var stepKeys = ['step1','step2','step3','step4','step5'];
+
+    function badgeClass(level, goodWhen){
+      if (level === goodWhen) return 'badge badge-good';
+      if (level === '낮음' || level === '높음') return 'badge badge-bad';
+      return 'badge badge-warn';
+    }
+
+    function setAILoading(loading){
+      analyzeBtn.disabled = loading;
+      analyzeBtn.textContent = loading ? '분석 중...' : 'AI로 다듬고 분석하기';
+    }
+
+    function renderAIResult(r){
+      aiEmpty.hidden = true;
+      aiError.hidden = true;
+      aiResult.hidden = false;
+
+      lastPolished = r.polished || null;
+      polishedList.innerHTML = '';
+      stepKeys.forEach(function(key){
+        var text = r.polished && r.polished[key];
+        if (!text) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'polished-item';
+        var title = document.createElement('div');
+        title.className = 'ai-block-title';
+        title.textContent = labels[key];
+        var p = document.createElement('p');
+        p.textContent = text;
+        wrap.appendChild(title);
+        wrap.appendChild(p);
+        polishedList.appendChild(wrap);
+      });
+
+      feasBadge.textContent = '실현 가능성 ' + (r.feasibility || '-');
+      feasBadge.className = badgeClass(r.feasibility, '높음');
+      feasReason.textContent = r.feasibility_reason || '';
+
+      riskBadge.textContent = '위험도 ' + (r.risk_level || '-');
+      riskBadge.className = badgeClass(r.risk_level, '낮음');
+
+      risksList.innerHTML = '';
+      (r.risks || []).forEach(function(item){
+        var li = document.createElement('li');
+        li.textContent = item;
+        risksList.appendChild(li);
+      });
+
+      suggestList.innerHTML = '';
+      (r.suggestions || []).forEach(function(item){
+        var li = document.createElement('li');
+        li.textContent = item;
+        suggestList.appendChild(li);
+      });
+    }
+
+    function renderAIError(status, body){
+      aiResult.hidden = true;
+      aiEmpty.hidden = true;
+      aiError.hidden = false;
+      if (status === 400){
+        aiError.textContent = '먼저 아이디어를 입력해주세요.';
+      } else if (status === 429){
+        aiError.textContent = '요청이 많아 잠시 후 다시 시도해주세요.';
+      } else if (status === 500 && body && body.error === 'server_not_configured'){
+        aiError.textContent = 'AI 기능이 아직 설정되지 않았습니다 (서버에 API 키가 없습니다).';
+      } else {
+        aiError.textContent = '분석 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      }
+    }
+
+    analyzeBtn.addEventListener('click', function(){
+      var s = currentState();
+      if (!s.step1 && !s.step2 && !s.step3){
+        flashStatus('먼저 아이디어를 입력해주세요.');
+        return;
+      }
+      setAILoading(true);
+      fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(s)
+      }).then(function(res){
+        return res.json().then(function(body){ return { status: res.status, body: body }; });
+      }).then(function(r){
+        if (r.status !== 200){
+          renderAIError(r.status, r.body);
+          return;
+        }
+        renderAIResult(r.body);
+      }).catch(function(){
+        renderAIError(0, null);
+      }).finally(function(){
+        setAILoading(false);
+      });
+    });
+
+    applyPolishedBtn.addEventListener('click', function(){
+      if (!lastPolished) return;
+      if (!window.confirm('현재 입력한 내용을 다듬어진 내용으로 덮어씁니다. 계속할까요?')) return;
+      stepKeys.forEach(function(key){
+        if (lastPolished[key]) els[key].value = lastPolished[key];
+      });
+      renderPreview();
+      saveDraft();
+      flashStatus('다듬은 내용으로 바꿨습니다.');
+    });
   })();
 </script>
 
