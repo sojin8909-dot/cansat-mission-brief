@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아이디어 종합</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    color-scheme: light dark;
+    --ink:#1A2733;
+    --ink-soft:#55697C;
+    --paper:#F2F6F7;
+    --surface:#FFFFFF;
+    --line:#D5E0E3;
+    --accent:#0E7A82;
+    --accent-strong:#095960;
+    --accent-soft:#E3F1F1;
+    --caution:#A6600C;
+    --caution-soft:#F7ECDB;
+    --good:#2E7D46;
+    --good-soft:#E4F3E8;
+    --bad:#B3261E;
+    --bad-soft:#FBE7E5;
+    --shadow: 0 1px 2px rgba(20,40,45,.06), 0 8px 24px rgba(20,40,45,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#E8EFF1;
+      --ink-soft:#9FB4BE;
+      --paper:#0D1518;
+      --surface:#151F23;
+      --line:#28383E;
+      --accent:#49D6DB;
+      --accent-strong:#7CE6E9;
+      --accent-soft:#122C2E;
+      --caution:#F0AC55;
+      --caution-soft:#2E2416;
+      --good:#6FD98A;
+      --good-soft:#17301F;
+      --bad:#FF8A80;
+      --bad-soft:#3A1613;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{ margin:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+    padding-inline:20px;
+    padding-block:40px 64px;
+  }
+  .mono{font-family:'IBM Plex Mono','IBM Plex Sans KR',monospace;}
+
+  .page{
+    max-width:760px;
+    margin-inline:auto;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+  }
+
+  .backlink{
+    font-size:13px;
+    color:var(--ink-soft);
+    text-decoration:none;
+  }
+  .backlink:hover{ color:var(--accent-strong); }
+
+  header.masthead{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono';
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+  }
+  h1{
+    margin:0;
+    font-size:clamp(28px,5vw,36px);
+    font-weight:700;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .lede{
+    margin:0;
+    max-width:60ch;
+    color:var(--ink-soft);
+    font-size:15px;
+    line-height:1.6;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+  }
+
+  .input-body{ padding:20px; display:flex; flex-direction:column; gap:10px; }
+  .input-body label{ font-size:12px; font-weight:600; color:var(--ink-soft); }
+  textarea{
+    font-family:inherit;
+    font-size:14.5px;
+    color:var(--ink);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:12px;
+    resize:vertical;
+    line-height:1.6;
+    min-height:220px;
+  }
+  textarea:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+    border-color:var(--accent);
+  }
+
+  button{
+    font-family:'IBM Plex Sans KR';
+    font-size:14px;
+    font-weight:600;
+    border-radius:7px;
+    padding:10px 16px;
+    cursor:pointer;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+  }
+  button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#052322;
+  }
+  button.primary:hover{ background:var(--accent-strong); border-color:var(--accent-strong); }
+  button.primary:disabled{ opacity:.6; cursor:default; }
+
+  .status{
+    font-family:'IBM Plex Mono';
+    font-size:12.5px;
+    color:var(--ink-soft);
+    min-height:16px;
+  }
+  .ai-error{ color:var(--bad); font-size:13.5px; }
+
+  .preview-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 20px 0;
+  }
+  .preview-head h2{ font-size:15px; margin:0; font-weight:700; }
+  .preview-head span{ font-size:12px; color:var(--ink-soft); font-family:'IBM Plex Mono'; }
+
+  .result-body{ padding:16px 20px 22px; display:flex; flex-direction:column; gap:22px; }
+
+  .idea-cards{ display:flex; flex-direction:column; gap:12px; }
+  .idea-card{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .idea-card-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .idea-title{ font-size:15.5px; font-weight:700; }
+  .idea-proposer{ font-size:12.5px; color:var(--ink-soft); font-family:'IBM Plex Mono'; }
+  .idea-summary{ font-size:14px; line-height:1.6; color:var(--ink-soft); margin:0; }
+  .badge-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .badge{
+    display:inline-flex; align-items:center;
+    padding:4px 10px; border-radius:999px;
+    font-family:'IBM Plex Mono'; font-size:11.5px; font-weight:600;
+  }
+  .badge-good{ background:var(--good-soft); color:var(--good); }
+  .badge-warn{ background:var(--caution-soft); color:var(--caution); }
+  .badge-bad{ background:var(--bad-soft); color:var(--bad); }
+
+  .block-title{ font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  .ai-text{ margin:0; font-size:14.5px; line-height:1.65; }
+  .ai-list{ margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:14.5px; line-height:1.55; }
+  .p-empty{ color:var(--ink-soft); opacity:.7; font-size:13.5px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <a class="backlink" href="index.html">← 개별 아이디어 작성으로 돌아가기</a>
+
+  <header class="masthead">
+    <span class="eyebrow">팀 회의 준비 · AI 종합</span>
+    <h1>아이디어 종합</h1>
+    <p class="lede">카카오톡이나 노션에 모아둔 조원들의 5단계 제안서를 통째로 붙여넣으면, AI가 아이디어별로 나누고 비교해서 회의에서 바로 쓸 수 있게 정리해줍니다.</p>
+  </header>
+
+  <section class="card">
+    <div class="input-body">
+      <label for="rawInput">모은 아이디어 붙여넣기</label>
+      <textarea id="rawInput" placeholder="예)
+[캔위성 미션 아이디어 제안서]
+제안자: 김항공
+아이디어 제목: 떨어지면서 온도 재는 위성
+01. 문제 정의
+비 오는 날 하늘 위쪽 온도는 얼마나 다를지 궁금했다.
+...
+
+[캔위성 미션 아이디어 제안서]
+제안자: 이하늘
+아이디어 제목: 낙하할때 흔들림 측정하는 캔위성
+...위 형식이 아니어도 괜찮아요. 카톡방에서 복사한 텍스트를 그대로 붙여넣어도 AI가 알아서 구분합니다."></textarea>
+      <div>
+        <button class="primary" id="synthesizeBtn" type="button">AI로 종합하기</button>
+      </div>
+      <div class="status" id="statusMsg" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="card" id="resultSection">
+    <div class="preview-head">
+      <h2>종합 결과</h2>
+      <span class="mono">비교 · 추천 · 회의 안건</span>
+    </div>
+    <div class="result-body">
+      <div id="resultEmpty" class="p-empty">아직 종합하지 않았습니다.</div>
+      <div id="resultError" class="ai-error" hidden></div>
+
+      <div id="resultContent" hidden style="display:flex; flex-direction:column; gap:22px;">
+        <div>
+          <div class="block-title" style="font-size:13px;">아이디어별 정리</div>
+          <div id="ideaCards" class="idea-cards"></div>
+        </div>
+        <div>
+          <div class="block-title">비교 노트</div>
+          <p id="comparisonNote" class="ai-text"></p>
+        </div>
+        <div>
+          <div class="block-title">추천 방향</div>
+          <p id="recommendation" class="ai-text"></p>
+        </div>
+        <div>
+          <div class="block-title">회의 안건</div>
+          <ul id="discussionList" class="ai-list"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  (function(){
+    var rawInput = document.getElementById('rawInput');
+    var synthesizeBtn = document.getElementById('synthesizeBtn');
+    var statusMsg = document.getElementById('statusMsg');
+    var statusTimer = null;
+
+    var resultEmpty = document.getElementById('resultEmpty');
+    var resultError = document.getElementById('resultError');
+    var resultContent = document.getElementById('resultContent');
+    var ideaCards = document.getElementById('ideaCards');
+    var comparisonNote = document.getElementById('comparisonNote');
+    var recommendation = document.getElementById('recommendation');
+    var discussionList = document.getElementById('discussionList');
+
+    function flashStatus(msg){
+      statusMsg.textContent = msg;
+      clearTimeout(statusTimer);
+      statusTimer = setTimeout(function(){ statusMsg.textContent = ''; }, 2800);
+    }
+
+    function badgeClass(level, goodWhen){
+      if (level === goodWhen) return 'badge badge-good';
+      if (level === '낮음' || level === '높음') return 'badge badge-bad';
+      return 'badge badge-warn';
+    }
+
+    function setLoading(loading){
+      synthesizeBtn.disabled = loading;
+      synthesizeBtn.textContent = loading ? '종합하는 중...' : 'AI로 종합하기';
+    }
+
+    function renderResult(r){
+      resultEmpty.hidden = true;
+      resultError.hidden = true;
+      resultContent.hidden = false;
+
+      ideaCards.innerHTML = '';
+      (r.ideas || []).forEach(function(idea){
+        var card = document.createElement('div');
+        card.className = 'idea-card';
+
+        var head = document.createElement('div');
+        head.className = 'idea-card-head';
+        var title = document.createElement('div');
+        title.className = 'idea-title';
+        title.textContent = idea.title || '(제목 없음)';
+        var proposer = document.createElement('div');
+        proposer.className = 'idea-proposer';
+        proposer.textContent = idea.proposer || '제안자 미상';
+        head.appendChild(title);
+        head.appendChild(proposer);
+
+        var badgeRow = document.createElement('div');
+        badgeRow.className = 'badge-row';
+        var feasBadge = document.createElement('span');
+        feasBadge.className = badgeClass(idea.feasibility, '높음');
+        feasBadge.textContent = '실현 가능성 ' + (idea.feasibility || '-');
+        var riskBadge = document.createElement('span');
+        riskBadge.className = badgeClass(idea.risk_level, '낮음');
+        riskBadge.textContent = '위험도 ' + (idea.risk_level || '-');
+        badgeRow.appendChild(feasBadge);
+        badgeRow.appendChild(riskBadge);
+
+        var summary = document.createElement('p');
+        summary.className = 'idea-summary';
+        summary.textContent = idea.summary || '';
+
+        card.appendChild(head);
+        card.appendChild(badgeRow);
+        card.appendChild(summary);
+        ideaCards.appendChild(card);
+      });
+
+      comparisonNote.textContent = r.comparison_note || '';
+      recommendation.textContent = r.recommendation || '';
+
+      discussionList.innerHTML = '';
+      (r.discussion_points || []).forEach(function(item){
+        var li = document.createElement('li');
+        li.textContent = item;
+        discussionList.appendChild(li);
+      });
+    }
+
+    function renderError(status, body){
+      resultContent.hidden = true;
+      resultEmpty.hidden = true;
+      resultError.hidden = false;
+      if (status === 400){
+        resultError.textContent = '먼저 아이디어 텍스트를 붙여넣어주세요.';
+      } else if (status === 429){
+        resultError.textContent = '요청이 많아 잠시 후 다시 시도해주세요.';
+      } else if (status === 500 && body && body.error === 'server_not_configured'){
+        resultError.textContent = 'AI 기능이 아직 설정되지 않았습니다.';
+      } else {
+        resultError.textContent = '종합 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      }
+    }
+
+    synthesizeBtn.addEventListener('click', function(){
+      var text = rawInput.value.trim();
+      if (!text){
+        flashStatus('먼저 아이디어 텍스트를 붙여넣어주세요.');
+        return;
+      }
+      setLoading(true);
+      fetch('/api/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+      }).then(function(res){
+        return res.json().then(function(body){ return { status: res.status, body: body }; });
+      }).then(function(r){
+        if (r.status !== 200){
+          renderError(r.status, r.body);
+          return;
+        }
+        renderResult(r.body);
+      }).catch(function(){
+        renderError(0, null);
+      }).finally(function(){
+        setLoading(false);
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
