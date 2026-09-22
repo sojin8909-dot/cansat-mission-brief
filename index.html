@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미션 브리프</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    color-scheme: light dark;
+    --ink:#1A2733;
+    --ink-soft:#55697C;
+    --paper:#F2F6F7;
+    --surface:#FFFFFF;
+    --line:#D5E0E3;
+    --accent:#0E7A82;
+    --accent-strong:#095960;
+    --accent-soft:#E3F1F1;
+    --caution:#A6600C;
+    --caution-soft:#F7ECDB;
+    --shadow: 0 1px 2px rgba(20,40,45,.06), 0 8px 24px rgba(20,40,45,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#E8EFF1;
+      --ink-soft:#9FB4BE;
+      --paper:#0D1518;
+      --surface:#151F23;
+      --line:#28383E;
+      --accent:#49D6DB;
+      --accent-strong:#7CE6E9;
+      --accent-soft:#122C2E;
+      --caution:#F0AC55;
+      --caution-soft:#2E2416;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{ margin:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+    padding-inline:20px;
+    padding-block:40px 64px;
+  }
+  .mono{font-family:'IBM Plex Mono','IBM Plex Sans KR',monospace;}
+
+  .page{
+    max-width:760px;
+    margin-inline:auto;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+  }
+
+  header.masthead{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono';
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+  }
+  h1{
+    margin:0;
+    font-size:clamp(28px,5vw,36px);
+    font-weight:700;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .lede{
+    margin:0;
+    max-width:60ch;
+    color:var(--ink-soft);
+    font-size:15px;
+    line-height:1.6;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+  }
+
+  .identity{
+    display:grid;
+    grid-template-columns:1fr 1.6fr;
+    gap:16px;
+    padding:20px;
+  }
+  @media (max-width:480px){ .identity{grid-template-columns:1fr;} }
+
+  .field{display:flex; flex-direction:column; gap:6px;}
+  .field label{
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+  }
+  input[type="text"], textarea{
+    font-family:inherit;
+    font-size:15px;
+    color:var(--ink);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:10px 12px;
+    resize:vertical;
+    line-height:1.55;
+  }
+  input[type="text"]:focus, textarea:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+    border-color:var(--accent);
+  }
+
+  .steps{ display:flex; flex-direction:column; gap:14px; }
+
+  .step{
+    display:grid;
+    grid-template-columns:56px 1fr;
+    gap:16px;
+    padding:20px;
+  }
+  @media (max-width:480px){ .step{grid-template-columns:40px 1fr;} }
+
+  .step-badge{
+    width:40px; height:40px;
+    border-radius:8px;
+    background:var(--accent-soft);
+    color:var(--accent-strong);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono'; font-weight:600; font-size:14px;
+  }
+  .step:last-of-type .step-badge{
+    background:var(--caution-soft);
+    color:var(--caution);
+  }
+  .step-body{ display:flex; flex-direction:column; gap:6px; }
+  .step-title{ font-size:17px; font-weight:700; }
+  .step-q{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin:0 0 4px; }
+  textarea.step-input{ min-height:76px; }
+
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+  button{
+    font-family:'IBM Plex Sans KR';
+    font-size:14px;
+    font-weight:600;
+    border-radius:7px;
+    padding:10px 16px;
+    cursor:pointer;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+  }
+  button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#052322;
+  }
+  button.primary:hover{ background:var(--accent-strong); border-color:var(--accent-strong); }
+  button.ghost:hover{ border-color:var(--accent); color:var(--accent-strong); }
+  .status{
+    font-family:'IBM Plex Mono';
+    font-size:12.5px;
+    color:var(--accent-strong);
+    min-height:16px;
+  }
+
+  .preview-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 20px 0;
+  }
+  .preview-head h2{ font-size:15px; margin:0; font-weight:700; }
+  .preview-head span{ font-size:12px; color:var(--ink-soft); font-family:'IBM Plex Mono'; }
+
+  #preview{
+    padding:16px 20px 22px;
+    font-size:14.5px;
+    line-height:1.7;
+    white-space:pre-wrap;
+    color:var(--ink-soft);
+  }
+  #preview strong{ color:var(--ink); }
+  #preview .p-empty{ color:var(--ink-soft); font-style:normal; opacity:.7; }
+
+  footer.note{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.7;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <span class="eyebrow">문제해결 5단계 · 아이디어 정리 서식</span>
+    <h1>미션 브리프</h1>
+    <p class="lede">캔위성 캡스톤 아이디어를 5단계로 편하게 정리해보는 서식이에요. 어렵게 생각하지 말고, 지금 아는 만큼만 적어도 괜찮습니다. 다 채우면 회의 때 서로 비교해봐요.</p>
+  </header>
+
+  <section class="card identity">
+    <div class="field">
+      <label for="proposer">제안자</label>
+      <input type="text" id="proposer" placeholder="예) 김항공" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="ideaTitle">아이디어 제목</label>
+      <input type="text" id="ideaTitle" placeholder="예) 떨어지면서 온도 재는 위성" autocomplete="off">
+    </div>
+  </section>
+
+  <section class="steps">
+
+    <div class="card step">
+      <div class="step-badge">01</div>
+      <div class="step-body">
+        <div class="step-title">문제 정의</div>
+        <p class="step-q">평소에 궁금했거나 불편했던 점이 있나요? 그걸 캔위성으로 알아본다면?</p>
+        <textarea class="step-input" id="step1" placeholder="예) 비 오는 날 하늘 위쪽 온도는 얼마나 다를지 궁금했다."></textarea>
+      </div>
+    </div>
+
+    <div class="card step">
+      <div class="step-badge">02</div>
+      <div class="step-body">
+        <div class="step-title">아이디어 설명</div>
+        <p class="step-q">그 문제를 해결할 아이디어를 친구에게 설명하듯 쉽게 적어보세요.</p>
+        <textarea class="step-input" id="step2" placeholder="예) 위성이 떨어지면서 높이랑 온도를 계속 재서 알려준다."></textarea>
+      </div>
+    </div>
+
+    <div class="card step">
+      <div class="step-badge">03</div>
+      <div class="step-body">
+        <div class="step-title">어떻게 만들까?</div>
+        <p class="step-q">뭐가 있어야 만들 수 있을까요? 정확히 몰라도 아는 대로, 짐작으로 적어도 괜찮아요.</p>
+        <textarea class="step-input" id="step3" placeholder="예) 온도 재는 센서, 배터리, 신호 보내는 장치 정도가 필요할 것 같다."></textarea>
+      </div>
+    </div>
+
+    <div class="card step">
+      <div class="step-badge">04</div>
+      <div class="step-body">
+        <div class="step-title">좋은 점</div>
+        <p class="step-q">이 아이디어가 재미있거나 좋은 이유는 뭔가요?</p>
+        <textarea class="step-input" id="step4" placeholder="예) 실제로 하늘에서 떨어지면서 데이터를 모으는 걸 직접 볼 수 있어서 신기할 것 같다."></textarea>
+      </div>
+    </div>
+
+    <div class="card step">
+      <div class="step-badge">05</div>
+      <div class="step-body">
+        <div class="step-title">예상되는 어려움</div>
+        <p class="step-q">만들면서 힘들 것 같은 부분이나 걱정되는 점이 있나요?</p>
+        <textarea class="step-input" id="step5" placeholder="예) 떨어질 때 충격으로 부품이 망가지지 않을까 걱정된다."></textarea>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="card">
+    <div class="preview-head">
+      <h2>미리보기</h2>
+      <span id="wordcount">0자</span>
+    </div>
+    <div id="preview"></div>
+    <div style="padding:0 20px 20px; display:flex; flex-direction:column; gap:10px;">
+      <div class="toolbar">
+        <button class="primary" id="copyBtn" type="button">복사하기</button>
+        <button class="ghost" id="fillExampleBtn" type="button">예시로 채우기</button>
+        <button class="ghost" id="clearBtn" type="button">초기화</button>
+      </div>
+      <div class="status" id="statusMsg" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <footer class="note">
+    이 페이지는 각자의 브라우저에서 개별적으로 작동합니다 (자동으로 서로 공유되지 않음).<br>
+    조원마다 이 링크를 열어 작성한 뒤 <strong style="color:var(--ink)">복사하기</strong>로 내용을 가져가 카카오톡 단체방·노션·구글독스 등에 붙여넣어 모으는 방식을 권장합니다.
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    var ids = ['proposer','ideaTitle','step1','step2','step3','step4','step5'];
+    var els = {};
+    ids.forEach(function(id){ els[id] = document.getElementById(id); });
+
+    var example = {
+      proposer: '김항공',
+      ideaTitle: '떨어지면서 온도 재는 위성',
+      step1: '비 오는 날 하늘 위쪽 온도는 얼마나 다를지 궁금했다.',
+      step2: '위성이 떨어지면서 1초마다 높이랑 온도를 재고, 그 값을 무선으로 계속 보내준다.',
+      step3: '온도 센서, 배터리, 신호 보내는 장치(무선 모듈), 값을 계산할 작은 컴퓨터(마이크로컨트롤러)가 필요할 것 같다.',
+      step4: '실제로 하늘에서 떨어지면서 온도가 어떻게 변하는지 눈으로 확인할 수 있어서 신기하고, 만들기도 비교적 쉬울 것 같다.',
+      step5: '떨어질 때 충격으로 센서나 배터리가 망가지지 않을까 걱정된다.'
+    };
+
+    var labels = {
+      step1: '01. 문제 정의',
+      step2: '02. 아이디어 설명',
+      step3: '03. 어떻게 만들까?',
+      step4: '04. 좋은 점',
+      step5: '05. 예상되는 어려움'
+    };
+
+    var preview = document.getElementById('preview');
+    var wordcount = document.getElementById('wordcount');
+    var statusMsg = document.getElementById('statusMsg');
+    var statusTimer = null;
+
+    var STORAGE_KEY = 'cansat-mission-brief-v1';
+
+    function currentState(){
+      var s = {};
+      ids.forEach(function(id){ s[id] = els[id].value; });
+      return s;
+    }
+
+    function buildText(s){
+      var lines = [];
+      lines.push('[캔위성 미션 아이디어 제안서]');
+      lines.push('제안자: ' + (s.proposer || '(미입력)'));
+      lines.push('아이디어 제목: ' + (s.ideaTitle || '(미입력)'));
+      lines.push('');
+      ['step1','step2','step3','step4','step5'].forEach(function(key){
+        lines.push(labels[key]);
+        lines.push(s[key] || '(미입력)');
+        lines.push('');
+      });
+      return lines.join('\n').trim();
+    }
+
+    function renderPreview(){
+      var s = currentState();
+      var total = ids.reduce(function(sum, id){ return sum + (s[id] || '').length; }, 0);
+      wordcount.textContent = total + '자';
+
+      if (!s.proposer && !s.ideaTitle && !s.step1 && !s.step2 && !s.step3 && !s.step4 && !s.step5){
+        preview.innerHTML = '<span class="p-empty">위 항목을 채우면 여기에 정리된 제안서가 표시됩니다.</span>';
+        return;
+      }
+      var html = '<strong>' + escapeHtml(s.ideaTitle || '(제목 미입력)') + '</strong>';
+      html += '  —  ' + escapeHtml(s.proposer || '제안자 미입력') + '\n\n';
+      ['step1','step2','step3','step4','step5'].forEach(function(key){
+        html += '<strong>' + labels[key] + '</strong>\n';
+        html += escapeHtml(s[key] || '(미입력)') + '\n\n';
+      });
+      preview.innerHTML = html.trim();
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>]/g, function(c){
+        return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;';
+      });
+    }
+
+    function flashStatus(msg){
+      statusMsg.textContent = msg;
+      clearTimeout(statusTimer);
+      statusTimer = setTimeout(function(){ statusMsg.textContent = ''; }, 2400);
+    }
+
+    function saveDraft(){
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState())); } catch(e){}
+    }
+
+    function loadDraft(){
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        ids.forEach(function(id){
+          if (typeof data[id] === 'string') els[id].value = data[id];
+        });
+      } catch(e){}
+    }
+
+    ids.forEach(function(id){
+      els[id].addEventListener('input', function(){
+        renderPreview();
+        saveDraft();
+      });
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      var text = buildText(currentState());
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){
+          flashStatus('복사되었습니다. 팀 채팅방이나 문서에 붙여넣으세요.');
+        }, function(){
+          flashStatus('복사에 실패했습니다. 미리보기 내용을 직접 선택해 복사해주세요.');
+        });
+      } else {
+        flashStatus('이 브라우저는 자동 복사를 지원하지 않습니다. 미리보기 내용을 직접 선택해 복사해주세요.');
+      }
+    });
+
+    document.getElementById('fillExampleBtn').addEventListener('click', function(){
+      ids.forEach(function(id){ els[id].value = example[id]; });
+      renderPreview();
+      saveDraft();
+      flashStatus('예시 내용으로 채웠습니다. 자유롭게 지우고 작성하세요.');
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', function(){
+      ids.forEach(function(id){ els[id].value = ''; });
+      renderPreview();
+      saveDraft();
+      flashStatus('초기화되었습니다.');
+    });
+
+    loadDraft();
+    renderPreview();
+  })();
+</script>
+
+</body>
+</html>
