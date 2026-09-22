@@ -60,7 +60,9 @@ module.exports = async function handler(req, res) {
     '}'
   ].join('\n');
 
-  const model = 'gemini-3.6-flash';
+  // "-lite" 모델은 무료 티어 하루 요청 한도가 훨씬 넉넉해서 사용.
+  // "-latest"는 별칭이라 모델이 단종돼도 자동으로 최신 버전을 가리킨다.
+  const model = 'gemini-flash-lite-latest';
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + apiKey;
 
   try {
@@ -80,7 +82,7 @@ module.exports = async function handler(req, res) {
       const errText = await upstream.text();
       res.status(upstream.status === 429 ? 429 : 502).json({
         error: 'upstream_error',
-        detail: errText.slice(0, 1200)
+        detail: errText.slice(0, 300)
       });
       return;
     }
