@@ -80,7 +80,7 @@ module.exports = async function handler(req, res) {
       const errText = await upstream.text();
       res.status(upstream.status === 429 ? 429 : 502).json({
         error: 'upstream_error',
-        detail: errText.slice(0, 300)
+        detail: errText.slice(0, 1200)
       });
       return;
     }
