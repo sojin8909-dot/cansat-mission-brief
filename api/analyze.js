@@ -60,7 +60,7 @@ module.exports = async function handler(req, res) {
     '}'
   ].join('\n');
 
-  const model = 'gemini-2.0-flash';
+  const model = 'gemini-3.6-flash';
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + apiKey;
 
   try {
