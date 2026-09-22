@@ -65,6 +65,9 @@ async function runOne(idea){
     process.stdout.write('[' + (i + 1) + '/' + dummyIdeas.length + '] ' + idea.label + ' ... ');
     var r = await runOne(idea);
     results.push(r);
+    if (i < dummyIdeas.length - 1){
+      await new Promise(function(resolve){ setTimeout(resolve, 4000); });
+    }
     if (r.ok){
       console.log('성공 (' + r.elapsedMs + 'ms, feasibility=' + r.body.feasibility + ', risk=' + r.body.risk_level + ')');
     } else if (r.status === 0){
