@@ -696,15 +696,24 @@
       cv.addEventListener('mouseleave', function(){ tip.hidden = true; });
     })();
 
-    function coverage(p, heat, k){
+    // share of the restoration area that reaches the target tree density after k drops,
+    // on a grid sized to the restoration area so the cell size doesn't depend on how far seeds scatter
+    function coverage(p, sim, perDrop, k){
+      var CG = 16, cell = 2 * p.R / CG;
+      var counts = new Float64Array(CG * CG);
+      for (var i = 0; i < sim.xs.length; i++){
+        var gx = Math.floor((sim.xs[i] + p.R) / cell), gy = Math.floor((sim.ys[i] + p.R) / cell);
+        if (gx >= 0 && gx < CG && gy >= 0 && gy < CG) counts[gy * CG + gx]++;
+      }
+      var perM2 = perDrop / (sim.nDrops * sim.nSeeds) / (cell * cell);
       var targetPerM2 = p.density / 10000;
       var inside = 0, ok = 0;
-      for (var gy = 0; gy < GRID; gy++){
-        for (var gx = 0; gx < GRID; gx++){
-          var cx = -heat.extent + (gx + 0.5) * heat.cell, cy = -heat.extent + (gy + 0.5) * heat.cell;
+      for (var y = 0; y < CG; y++){
+        for (var x = 0; x < CG; x++){
+          var cx = -p.R + (x + 0.5) * cell, cy = -p.R + (y + 0.5) * cell;
           if (cx * cx + cy * cy > p.R * p.R) continue;
           inside++;
-          if (k * heat.dens[gy * GRID + gx] * p.germ * p.surv >= targetPerM2) ok++;
+          if (k * counts[y * CG + x] * perM2 * p.germ * p.surv >= targetPerM2) ok++;
         }
       }
       return inside ? ok / inside : 0;
@@ -797,8 +806,8 @@
         '바닥 모양: <b>' + foot + '</b> — 바람 방향 ±' + sx.toFixed(1) + 'm, 옆 방향 ±' + sy.toFixed(1) + 'm (표준편차). 선 하나가 씨앗 하나의 경로입니다.';
       drawSide(p, seeds);
 
-      var heat = drawHeat(p, sim, nf.perDrop);
-      var cov = isFinite(nf.drops) ? coverage(p, heat, nf.drops) : 0;
+      drawHeat(p, sim, nf.perDrop);
+      var cov = isFinite(nf.drops) ? coverage(p, sim, nf.perDrop, nf.drops) : 0;
       var insight = document.getElementById('insight');
       insight.hidden = false;
       if (!isFinite(nf.drops)){
