@@ -19,7 +19,10 @@
     --accent:#0E7A82;
     --accent-strong:#095960;
     --accent-soft:#E3F1F1;
-    --miss:#B9C6CC;
+    --caution:#A6600C;
+    --caution-soft:#F7ECDB;
+    --good:#2E7D46;
+    --good-soft:#E4F3E8;
     --shadow: 0 1px 2px rgba(20,40,45,.06), 0 8px 24px rgba(20,40,45,.06);
   }
   @media (prefers-color-scheme: dark){
@@ -34,7 +37,10 @@
       --accent:#49D6DB;
       --accent-strong:#7CE6E9;
       --accent-soft:#122C2E;
-      --miss:#3E5058;
+      --caution:#F0AC55;
+      --caution-soft:#2E2416;
+      --good:#6FD98A;
+      --good-soft:#17301F;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     }
   }
@@ -48,14 +54,14 @@
     padding-inline:20px;
     padding-block:40px 64px;
   }
-  .page{ max-width:880px; margin-inline:auto; display:flex; flex-direction:column; gap:24px; }
+  .page{ max-width:920px; margin-inline:auto; display:flex; flex-direction:column; gap:24px; }
   .backlink{ font-size:13px; color:var(--ink-soft); text-decoration:none; }
   .backlink:hover{ color:var(--accent-strong); }
 
   header.masthead{ display:flex; flex-direction:column; gap:8px; padding-bottom:20px; border-bottom:1px solid var(--line); }
   .eyebrow{ font-family:'IBM Plex Mono'; font-size:12px; letter-spacing:.08em; color:var(--accent); font-weight:600; }
   h1{ margin:0; font-size:clamp(26px,5vw,34px); font-weight:700; text-wrap:balance; }
-  .lede{ margin:0; max-width:62ch; color:var(--ink-soft); font-size:15px; line-height:1.6; }
+  .lede{ margin:0; max-width:64ch; color:var(--ink-soft); font-size:15px; line-height:1.6; }
 
   .card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); }
   .card-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:18px 20px 0; flex-wrap:wrap; }
@@ -63,7 +69,9 @@
   .card-head span{ font-size:12px; color:var(--ink-soft); font-family:'IBM Plex Mono'; }
   .card-body{ padding:16px 20px 20px; }
 
-  .inputs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:14px 18px; }
+  .inputs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px 18px; }
+  .group-label{ grid-column:1/-1; font-size:12px; font-weight:700; color:var(--accent-strong); margin-top:8px; padding-top:10px; border-top:1px solid var(--line); }
+  .group-label:first-child{ border-top:none; padding-top:0; margin-top:0; }
   .field{ display:flex; flex-direction:column; gap:5px; }
   .field label{ font-size:12.5px; font-weight:600; }
   .field small{ font-size:11.5px; color:var(--ink-soft); line-height:1.45; }
@@ -73,8 +81,18 @@
     font-variant-numeric:tabular-nums;
   }
   .field input:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
-  .check{ display:flex; align-items:center; gap:8px; font-size:13px; margin-top:14px; }
-  .group-label{ grid-column:1/-1; font-size:12px; font-weight:600; color:var(--accent-strong); margin-top:4px; letter-spacing:.02em; }
+  .derived{ grid-column:1/-1; font-size:13px; color:var(--ink-soft); background:var(--paper); border-radius:7px; padding:10px 12px; line-height:1.6; }
+  .derived b{ color:var(--ink); font-family:'IBM Plex Mono'; font-weight:600; }
+
+  .seg{ grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap; }
+  .seg label{
+    display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600;
+    border:1px solid var(--line); border-radius:8px; padding:9px 12px; cursor:pointer;
+  }
+  .seg input{ accent-color:var(--accent); }
+  .seg label:has(input:checked){ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-strong); }
+  .check{ grid-column:1/-1; display:flex; align-items:center; gap:8px; font-size:13px; }
+  .check input{ accent-color:var(--accent); }
 
   .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
   button{
@@ -86,31 +104,36 @@
   button.primary:hover{ background:var(--accent-strong); border-color:var(--accent-strong); }
   button.ghost:hover{ border-color:var(--accent); color:var(--accent-strong); }
 
-  .stats{ display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:12px; }
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:12px; }
   .stat{ border:1px solid var(--line); border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
   .stat .k{ font-size:12px; color:var(--ink-soft); }
-  .stat .v{ font-family:'IBM Plex Mono'; font-size:24px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .stat .v{ font-family:'IBM Plex Mono'; font-size:22px; font-weight:600; font-variant-numeric:tabular-nums; }
   .stat .s{ font-size:11.5px; color:var(--ink-soft); line-height:1.45; }
   .stat.hero{ background:var(--accent-soft); border-color:transparent; }
   .stat.hero .v{ color:var(--accent-strong); }
+  .section-label{ font-size:12px; font-weight:700; color:var(--ink-soft); margin:18px 0 8px; }
+  .section-label:first-child{ margin-top:0; }
 
-  .physics{ margin-top:14px; font-size:13px; color:var(--ink-soft); line-height:1.7; }
-  .physics b{ color:var(--ink); font-family:'IBM Plex Mono'; font-weight:600; }
+  .formula{ margin-top:14px; font-size:13px; color:var(--ink-soft); line-height:1.8; }
+  .formula b{ color:var(--ink); font-family:'IBM Plex Mono'; font-weight:600; }
+  .insight{ margin-top:14px; font-size:13.5px; line-height:1.6; border-radius:8px; padding:12px 14px; }
+  .insight.warn{ background:var(--caution-soft); color:var(--caution); }
+  .insight.ok{ background:var(--good-soft); color:var(--good); }
 
-  .chart-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  @media (max-width:720px){ .chart-grid{ grid-template-columns:1fr; } }
   .chart-title{ font-size:13px; font-weight:600; margin-bottom:8px; }
-  .legend{ display:flex; gap:14px; font-size:12px; color:var(--ink-soft); margin-top:8px; flex-wrap:wrap; }
-  .legend i{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px; }
-  .legend i.ring{ background:transparent; border:2px dashed var(--ink-soft); }
-  canvas{ width:100%; max-width:100%; aspect-ratio:1/1; display:block; border-radius:6px; }
-
-  .hist{ position:relative; }
-  .hist svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .chart-sub{ font-size:12px; color:var(--ink-soft); margin:-4px 0 10px; line-height:1.5; }
+  canvas{ width:100%; max-width:100%; display:block; border-radius:6px; }
+  #side{ aspect-ratio:2/1; }
+  .heat-wrap{ position:relative; max-width:560px; }
+  #heat{ aspect-ratio:1/1; }
   .tip{
     position:absolute; pointer-events:none; background:var(--ink); color:var(--surface);
-    font-size:12px; padding:6px 9px; border-radius:6px; white-space:nowrap; font-family:'IBM Plex Mono';
+    font-size:12px; padding:6px 9px; border-radius:6px; white-space:nowrap; font-family:'IBM Plex Mono'; line-height:1.5;
   }
+  .colorbar{ display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-soft); font-family:'IBM Plex Mono'; margin-top:10px; flex-wrap:wrap; }
+  .colorbar .bar{ width:180px; height:10px; border-radius:5px; border:1px solid var(--line); }
+  .legend{ display:flex; gap:14px; font-size:12px; color:var(--ink-soft); margin-top:8px; flex-wrap:wrap; }
+  .legend i{ display:inline-block; width:14px; height:0; border-top:2px dashed var(--ink-soft); margin-right:5px; vertical-align:3px; }
 
   .table-wrap{ overflow-x:auto; }
   table{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
@@ -120,6 +143,8 @@
   td{ font-family:'IBM Plex Mono'; }
   tr.current td{ background:var(--accent-soft); color:var(--accent-strong); font-weight:600; }
   .note{ font-size:12px; color:var(--ink-soft); line-height:1.6; margin-top:10px; }
+  footer.note{ border-top:1px solid var(--line); padding-top:16px; }
+  footer.note ul{ margin:6px 0 0; padding-left:18px; }
 </style>
 </head>
 <body>
@@ -131,29 +156,79 @@
   <header class="masthead">
     <span class="eyebrow">씨앗 살포 미션 · 확률 시뮬레이션</span>
     <h1>씨앗 살포 확률 계산기</h1>
-    <p class="lede">가정값을 넣으면 씨앗 수천 개를 가상으로 떨어뜨려서, <b>목표 지역에 떨어질 확률</b>과 <b>떨어진 뒤 발아까지 이어질 확률</b>을 계산합니다.</p>
+    <p class="lede">캔위성 투하를 수백 번, 씨앗을 수만 개 가상으로 떨어뜨려서 <b>어디에 얼마나 떨어지는지</b>, <b>숲을 복원하려면 씨앗이 몇 개 필요한지</b>, <b>몇 번 투하해야 하는지</b> 계산합니다.</p>
   </header>
 
   <section class="card">
-    <div class="card-head"><h2>입력값</h2><span>가정값 · 문헌값</span></div>
+    <div class="card-head"><h2>입력값</h2><span>기본값은 예시 · 문헌값으로 바꾸세요</span></div>
     <div class="card-body">
       <div class="inputs">
-        <div class="group-label">낙하 조건</div>
+
+        <div class="group-label">씨앗</div>
+        <div class="seg" role="radiogroup" aria-label="씨앗 종류">
+          <label><input type="radio" name="seedType" id="typeRound" value="round" checked> 둥근 씨앗 (도토리·콩 등)</label>
+          <label><input type="radio" name="seedType" id="typeWinged" value="winged"> 날개 달린 씨앗 (소나무 등)</label>
+        </div>
+
+        <div class="field" data-type="round">
+          <label for="massRound">씨앗 1개 질량 (g)</label>
+          <input type="number" id="massRound" value="0.3" min="0.001" step="0.01">
+        </div>
+        <div class="field" data-type="round">
+          <label for="diam">씨앗 지름 (mm)</label>
+          <input type="number" id="diam" value="8" min="0.1" step="0.1">
+        </div>
+        <div class="field" data-type="round">
+          <label for="cd">항력계수 Cd</label>
+          <input type="number" id="cd" value="0.47" min="0.05" step="0.01">
+          <small>공 모양은 약 0.47</small>
+        </div>
+
+        <div class="field" data-type="winged" hidden>
+          <label for="massWing">씨앗 1개 질량 (g)</label>
+          <input type="number" id="massWing" value="0.012" min="0.0001" step="0.001">
+          <small>날개 포함 질량</small>
+        </div>
+        <div class="field" data-type="winged" hidden>
+          <label for="vtWing">낙하 속도 (m/s)</label>
+          <input type="number" id="vtWing" value="1" min="0.1" step="0.1">
+          <small>회전하며 떨어져서 공식이 안 맞음 → 문헌·실측값 입력</small>
+        </div>
+
+        <div class="field">
+          <label for="cv">씨앗마다 차이 (%)</label>
+          <input type="number" id="cv" value="10" min="0" max="50" step="1">
+          <small>질량·크기(날개 씨앗은 낙하 속도)가 평균에서 벗어나는 정도</small>
+        </div>
+
+        <div class="derived" id="vtDerived"></div>
+
+        <div class="group-label">방출</div>
         <div class="field">
           <label for="h">방출 고도 (m)</label>
           <input type="number" id="h" value="100" min="1" step="1">
-          <small>씨앗 보관함을 여는 높이</small>
         </div>
         <div class="field">
-          <label for="vt">씨앗 낙하 속도 (m/s)</label>
-          <input type="number" id="vt" value="4" min="0.1" step="0.1">
-          <small>공기저항과 균형을 이룬 일정한 낙하 속도(종단속도)</small>
+          <label for="ej">방출 순간 튀는 속도 (m/s)</label>
+          <input type="number" id="ej" value="1" min="0" step="0.1">
+          <small>보관함이 열릴 때 옆으로 튀는 속도 (표준편차)</small>
         </div>
         <div class="field">
           <label for="relErr">방출 위치 오차 (m)</label>
           <input type="number" id="relErr" value="5" min="0" step="0.5">
-          <small>GPS 오차 등으로 방출 지점이 어긋나는 정도 (표준편차)</small>
+          <small>GPS 오차 등 (표준편차, 투하마다)</small>
         </div>
+        <div class="field">
+          <label for="dur">살포 지속 시간 (s)</label>
+          <input type="number" id="dur" value="0" min="0" step="0.5">
+          <small>0이면 한 번에 쏟음. 길수록 바람 방향으로 긴 띠가 됨</small>
+        </div>
+        <div class="field">
+          <label for="vc">캔위성 하강 속도 (m/s)</label>
+          <input type="number" id="vc" value="8" min="0" step="0.5">
+          <small>살포하는 동안 캔위성도 내려가고 바람에 밀림</small>
+        </div>
+        <label class="check"><input type="checkbox" id="aim" checked> 바람에 밀리는 만큼 미리 바람 쪽에서 방출하기 (조준 보정)</label>
 
         <div class="group-label">바람</div>
         <div class="field">
@@ -161,34 +236,48 @@
           <input type="number" id="U" value="3" min="0" step="0.1">
         </div>
         <div class="field">
-          <label for="sU">풍속 흔들림 (m/s)</label>
+          <label for="sU">풍속 예측 오차 (m/s)</label>
           <input type="number" id="sU" value="1" min="0" step="0.1">
-          <small>풍속이 평균에서 얼마나 오르내리는지 (표준편차)</small>
+          <small>예보와 실제 풍속의 차이 (투하마다, 표준편차)</small>
         </div>
         <div class="field">
           <label for="sTh">풍향 흔들림 (°)</label>
-          <input type="number" id="sTh" value="15" min="0" step="1">
-          <small>바람 방향이 얼마나 바뀌는지 (표준편차)</small>
+          <input type="number" id="sTh" value="10" min="0" step="1">
+          <small>씨앗이 떨어지는 동안 바람 방향이 바뀌는 정도</small>
+        </div>
+        <div class="field">
+          <label for="turb">난류 세기 (m/s)</label>
+          <input type="number" id="turb" value="0.5" min="0" step="0.1">
+          <small>불규칙한 돌풍. 퍼짐이 √시간에 비례해 커짐</small>
         </div>
 
-        <div class="group-label">목표 · 발아</div>
+        <div class="group-label">복원 목표</div>
         <div class="field">
-          <label for="R">목표 지역 반경 (m)</label>
-          <input type="number" id="R" value="20" min="1" step="1">
-          <small>이 원 안에 떨어지면 "목표 착지"로 인정</small>
+          <label for="R">복원 지역 반경 (m)</label>
+          <input type="number" id="R" value="30" min="1" step="1">
+        </div>
+        <div class="field">
+          <label for="density">목표 나무 밀도 (그루/ha)</label>
+          <input type="number" id="density" value="1000" min="1" step="10">
+          <small>1ha = 10,000m². 산림 복원 문헌값 입력</small>
         </div>
         <div class="field">
           <label for="germ">발아율 (%)</label>
           <input type="number" id="germ" value="70" min="0" max="100" step="1">
-          <small>문헌에서 찾은 종자 발아율</small>
         </div>
         <div class="field">
-          <label for="nSeeds">살포할 씨앗 수 (개)</label>
-          <input type="number" id="nSeeds" value="200" min="1" step="1">
+          <label for="surv">발아 후 생존율 (%)</label>
+          <input type="number" id="surv" value="30" min="0" max="100" step="1">
+          <small>싹이 튼 뒤 살아남아 나무로 자라는 비율</small>
+        </div>
+
+        <div class="group-label">캔위성 탑재</div>
+        <div class="field">
+          <label for="payload">씨앗 탑재 가능 질량 (g)</label>
+          <input type="number" id="payload" value="100" min="0.1" step="1">
+          <small>캔위성 전체 질량 제한에서 씨앗에 쓸 수 있는 몫</small>
         </div>
       </div>
-
-      <label class="check"><input type="checkbox" id="aim" checked> 바람만큼 미리 바람 쪽으로 옮겨서 방출하기 (조준 보정)</label>
 
       <div class="actions">
         <button class="primary" id="runBtn" type="button">계산하기</button>
@@ -198,60 +287,75 @@
   </section>
 
   <section class="card">
-    <div class="card-head"><h2>결과</h2><span id="simInfo">씨앗 5,000개 가상 낙하</span></div>
+    <div class="card-head"><h2>결과</h2><span id="simInfo"></span></div>
     <div class="card-body">
+      <div class="section-label">확률</div>
       <div class="stats">
         <div class="stat">
-          <span class="k">목표 지역 착지 확률</span>
+          <span class="k">복원 지역 착지 확률</span>
           <span class="v" id="pLand">-</span>
-          <span class="s">반경 안에 떨어진 비율</span>
+          <span class="s">씨앗 1개가 반경 안에 떨어질 확률</span>
         </div>
         <div class="stat">
-          <span class="k">발아율 (입력값)</span>
-          <span class="v" id="pGerm">-</span>
-          <span class="s">문헌값 가정</span>
+          <span class="k">발아율 × 생존율</span>
+          <span class="v" id="pGrow">-</span>
+          <span class="s">입력값 (문헌 가정)</span>
         </div>
         <div class="stat hero">
-          <span class="k">최종 성공 확률</span>
+          <span class="k">씨앗 1개 최종 성공 확률</span>
           <span class="v" id="pFinal">-</span>
-          <span class="s">착지 확률 × 발아율</span>
+          <span class="s">착지 × 발아 × 생존</span>
+        </div>
+      </div>
+
+      <div class="section-label">필요량</div>
+      <div class="stats">
+        <div class="stat">
+          <span class="k">목표 나무 수</span>
+          <span class="v" id="trees">-</span>
+          <span class="s" id="treesSub">-</span>
+        </div>
+        <div class="stat hero">
+          <span class="k">필요한 씨앗 수</span>
+          <span class="v" id="needSeeds">-</span>
+          <span class="s" id="needSeedsSub">-</span>
         </div>
         <div class="stat">
-          <span class="k">예상 성공 씨앗 수</span>
-          <span class="v" id="expected">-</span>
-          <span class="s" id="expectedSub">-</span>
+          <span class="k">1회 탑재 씨앗 수</span>
+          <span class="v" id="perDrop">-</span>
+          <span class="s" id="perDropSub">-</span>
+        </div>
+        <div class="stat hero">
+          <span class="k">필요한 투하 횟수</span>
+          <span class="v" id="drops">-</span>
+          <span class="s">같은 지점 조준 기준</span>
         </div>
       </div>
-      <p class="physics" id="physics"></p>
+
+      <div class="formula" id="formula"></div>
+      <div class="insight" id="insight" hidden></div>
     </div>
   </section>
 
   <section class="card">
-    <div class="card-head"><h2>착지 분포</h2><span>목표 중심 = (0, 0)</span></div>
+    <div class="card-head"><h2>옆에서 본 낙하 모양</h2><span>투하 1회 · 예보 풍속 그대로일 때</span></div>
     <div class="card-body">
-      <div class="chart-grid">
-        <div>
-          <div class="chart-title">위에서 본 착지 지점</div>
-          <canvas id="scatter" width="640" height="640" role="img" aria-label="씨앗 착지 지점 산점도"></canvas>
-          <div class="legend">
-            <span><i style="background:var(--accent)"></i>목표 안</span>
-            <span><i style="background:var(--miss)"></i>목표 밖</span>
-            <span><i class="ring"></i>목표 반경</span>
-          </div>
-        </div>
-        <div>
-          <div class="chart-title">목표 중심으로부터 거리별 비율</div>
-          <div class="hist" id="hist"></div>
-          <p class="note">점선 왼쪽 막대가 목표 반경 안쪽입니다.</p>
-        </div>
-      </div>
+      <p class="chart-sub" id="shapeSub"></p>
+      <canvas id="side" width="880" height="440" role="img" aria-label="옆에서 본 씨앗 낙하 궤적"></canvas>
+      <div class="legend"><span><i></i>복원 지역 (지름)</span></div>
     </div>
   </section>
 
   <section class="card">
-    <div class="card-head"><h2>확률분포표 · 거리별</h2><span>착지 지점이 목표에서 얼마나 떨어졌나</span></div>
+    <div class="card-head"><h2>위에서 본 씨앗 밀도</h2><span>투하 1회당 기대값</span></div>
     <div class="card-body">
-      <div class="table-wrap"><table id="distTable"></table></div>
+      <p class="chart-sub">바람 예측 오차까지 포함해 투하를 여러 번 했을 때의 평균입니다. 색이 진할수록 1m²에 씨앗이 많이 떨어집니다. 마우스를 올리면 값이 보여요.</p>
+      <div class="heat-wrap">
+        <canvas id="heat" width="600" height="600" role="img" aria-label="씨앗 밀도 지도"></canvas>
+        <div class="tip" id="heatTip" hidden></div>
+      </div>
+      <div class="colorbar"><span>0</span><span class="bar" id="cbar"></span><span id="cbarMax">-</span><span>개/m²</span></div>
+      <div class="legend"><span><i></i>복원 지역 경계</span></div>
     </div>
   </section>
 
@@ -259,25 +363,51 @@
     <div class="card-head"><h2>확률분포표 · 풍속별</h2><span>다른 조건은 그대로, 평균 풍속만 바꿨을 때</span></div>
     <div class="card-body">
       <div class="table-wrap"><table id="windTable"></table></div>
-      <p class="note">강조된 줄이 현재 입력한 평균 풍속에 가장 가까운 값입니다. 발표 때 "풍속이 몇 m/s 이하일 때만 살포한다" 같은 운용 조건을 정하는 근거로 쓸 수 있어요.</p>
+      <p class="note">강조된 줄이 현재 입력한 평균 풍속에 가장 가까운 값입니다. "풍속 몇 m/s 이하에서만 투하한다" 같은 운용 조건을 정하는 근거로 쓸 수 있어요.</p>
     </div>
   </section>
 
-  <footer class="note" style="border-top:1px solid var(--line); padding-top:16px;">
-    <b>모델 가정</b> — 씨앗은 방출 직후 바로 일정한 낙하 속도에 도달하고, 낙하하는 동안 바람과 같은 속도로 옆으로 밀린다고 가정했습니다. 풍속·풍향·방출 위치 오차는 정규분포로 무작위 생성합니다. 발아율은 착지 위치와 상관없이 일정하다고 가정했습니다. 실제 낙하 실험 데이터가 생기면 입력값을 실측값으로 바꿔 검증해보세요.
+  <section class="card">
+    <div class="card-head"><h2>확률분포표 · 거리별</h2><span>복원 지역 중심에서 얼마나 떨어졌나</span></div>
+    <div class="card-body">
+      <div class="table-wrap"><table id="distTable"></table></div>
+    </div>
+  </section>
+
+  <footer class="note">
+    <b>모델 가정</b>
+    <ul>
+      <li>씨앗은 방출 직후 곧바로 종단속도(일정한 낙하 속도)에 도달합니다. 둥근 씨앗은 v = √(2mg / ρ·Cd·A), 공기 밀도 ρ = 1.225 kg/m³.</li>
+      <li>방출 순간 옆으로 튄 속도는 공기저항으로 줄어들어, 약 (튀는 속도 × 낙하 속도 ÷ g)만큼만 옆으로 이동합니다.</li>
+      <li>씨앗은 떨어지는 동안 바람과 같은 속도로 밀립니다. 고도에 따른 풍속 변화는 넣지 않았습니다.</li>
+      <li>난류는 무작위 걸음으로 보고 퍼짐 = 난류 세기 × √(2 × 2초 × 낙하 시간)으로 계산합니다.</li>
+      <li>풍속 예측 오차와 방출 위치 오차는 투하 전체를 한꺼번에 옮기고, 씨앗마다 차이·풍향 흔들림·난류·튀는 속도는 씨앗을 서로 흩뜨립니다.</li>
+      <li>발아율·생존율은 떨어진 위치와 상관없이 일정하다고 봅니다.</li>
+    </ul>
+    실제 낙하 실험 데이터가 생기면 입력값을 실측값으로 바꿔 결과를 검증해보세요.
   </footer>
 
 </div>
 
 <script>
   (function(){
-    var N = 5000;
-    var N_WIND = 2000;
-    var defaults = { h:100, vt:4, relErr:5, U:3, sU:1, sTh:15, R:20, germ:70, nSeeds:200 };
-    var fieldIds = Object.keys(defaults);
+    var G = 9.81, RHO = 1.225, TAU_L = 2;
+    var DROPS = 150, SEEDS = 200;
+    var W_DROPS = 60, W_SEEDS = 120;
+    var GRID = 60;
+
+    var defaults = {
+      massRound:0.3, diam:8, cd:0.47, massWing:0.012, vtWing:1, cv:10,
+      h:100, ej:1, relErr:5, dur:0, vc:8,
+      U:3, sU:1, sTh:10, turb:0.5,
+      R:30, density:1000, germ:70, surv:30, payload:100
+    };
+    var ids = Object.keys(defaults);
     var els = {};
-    fieldIds.forEach(function(id){ els[id] = document.getElementById(id); });
+    ids.forEach(function(id){ els[id] = document.getElementById(id); });
     var aimEl = document.getElementById('aim');
+    var typeRound = document.getElementById('typeRound');
+    var typeWinged = document.getElementById('typeWinged');
 
     function mulberry32(seed){
       return function(){
@@ -298,223 +428,409 @@
 
     function readParams(){
       var p = {};
-      fieldIds.forEach(function(id){
+      ids.forEach(function(id){
         var v = parseFloat(els[id].value);
         p[id] = isFinite(v) ? v : defaults[id];
       });
-      p.vt = Math.max(p.vt, 0.1);
-      p.h = Math.max(p.h, 0.1);
-      p.R = Math.max(p.R, 0.1);
-      p.germ = Math.min(Math.max(p.germ, 0), 100);
+      p.type = typeWinged.checked ? 'winged' : 'round';
       p.aim = aimEl.checked;
+      p.h = Math.max(p.h, 1);
+      p.R = Math.max(p.R, 1);
+      p.cv = Math.min(Math.max(p.cv, 0), 50) / 100;
+      p.germ = Math.min(Math.max(p.germ, 0), 100) / 100;
+      p.surv = Math.min(Math.max(p.surv, 0), 100) / 100;
+      p.seedMass = p.type === 'round' ? Math.max(p.massRound, 1e-4) : Math.max(p.massWing, 1e-5);
+      p.vtMean = vtFor(p, 1, 1);
       return p;
     }
 
-    function simulate(p, n, seed){
-      var randn = normalGen(mulberry32(seed));
-      var t = p.h / p.vt;
-      var aimOffset = p.aim ? p.U * t : 0;
-      var xs = new Float32Array(n), ys = new Float32Array(n), ds = new Float32Array(n);
-      var hits = 0;
-      for (var i = 0; i < n; i++){
-        var u = Math.max(0, p.U + p.sU * randn());
-        var th = (p.sTh * randn()) * Math.PI / 180;
-        var x = u * t * Math.cos(th) - aimOffset + p.relErr * randn();
-        var y = u * t * Math.sin(th) + p.relErr * randn();
-        var d = Math.sqrt(x * x + y * y);
-        xs[i] = x; ys[i] = y; ds[i] = d;
-        if (d <= p.R) hits++;
-      }
-      return { xs:xs, ys:ys, ds:ds, pLand: hits / n, t:t };
+    function vtFor(p, mFactor, dFactor){
+      if (p.type === 'winged') return Math.max(0.1, p.vtWing * mFactor);
+      var m = Math.max(p.massRound, 1e-4) / 1000 * mFactor;
+      var d = Math.max(p.diam, 0.1) / 1000 * dFactor;
+      var A = Math.PI * d * d / 4;
+      return Math.sqrt(2 * m * G / (RHO * Math.max(p.cd, 0.05) * A));
     }
 
-    function pct(x, digits){ return (x * 100).toFixed(digits === undefined ? 1 : digits) + '%'; }
+    function aimOffset(p){
+      if (!p.aim) return 0;
+      var tau = p.dur / 2;
+      var hc = Math.max(1, p.h - p.vc * tau);
+      return p.U * (tau + hc / p.vtMean);
+    }
+
+    // one seed: returns release point and landing point relative to the target center
+    function dropSeed(p, Ud, ex, ey, off, rand, randn){
+      var tau = p.dur * rand();
+      var hc = Math.max(1, p.h - p.vc * tau);
+      var f1 = Math.max(0.2, 1 + p.cv * randn());
+      var f2 = p.type === 'round' ? Math.max(0.2, 1 + p.cv * randn()) : 1;
+      var vt = vtFor(p, f1, f2);
+      var t = hc / vt;
+      var th = p.sTh * randn() * Math.PI / 180;
+      var stop = vt / G;
+      var jx = p.ej * randn() * stop, jy = p.ej * randn() * stop;
+      var ts = p.turb * Math.sqrt(2 * TAU_L * t);
+      var tx = ts * randn(), ty = ts * randn();
+      var rx = Ud * tau - off + ex, ry = ey;
+      var drift = Ud * t;
+      return {
+        rx: rx, ry: ry, hc: hc, t: t, vt: vt, stop: stop,
+        jx: jx, jy: jy, tx: tx, ty: ty, dx: drift * Math.cos(th), dy: drift * Math.sin(th),
+        x: rx + jx + tx + drift * Math.cos(th),
+        y: ry + jy + ty + drift * Math.sin(th)
+      };
+    }
+
+    function simulate(p, nDrops, nSeeds, seed){
+      var rand = mulberry32(seed), randn = normalGen(rand);
+      var off = aimOffset(p);
+      var n = nDrops * nSeeds;
+      var xs = new Float32Array(n), ys = new Float32Array(n);
+      var hits = 0, k = 0;
+      for (var d = 0; d < nDrops; d++){
+        var Ud = Math.max(0, p.U + p.sU * randn());
+        var ex = p.relErr * randn(), ey = p.relErr * randn();
+        for (var s = 0; s < nSeeds; s++){
+          var r = dropSeed(p, Ud, ex, ey, off, rand, randn);
+          xs[k] = r.x; ys[k] = r.y;
+          if (r.x * r.x + r.y * r.y <= p.R * p.R) hits++;
+          k++;
+        }
+      }
+      return { xs: xs, ys: ys, pLand: hits / n, off: off, nDrops: nDrops, nSeeds: nSeeds };
+    }
+
+    function nominalDrop(p, n){
+      var rand = mulberry32(7), randn = normalGen(rand);
+      var off = aimOffset(p);
+      var out = [];
+      for (var i = 0; i < n; i++) out.push(dropSeed(p, p.U, 0, 0, off, rand, randn));
+      return out;
+    }
+
+    // horizontal position of a seed after falling fraction `frac` of its fall time
+    function posAt(s, frac){
+      var ej = 1 - Math.exp(-frac * s.t / Math.max(s.stop, 1e-3));
+      var sq = Math.sqrt(frac);
+      return [s.rx + s.jx * ej + s.dx * frac + s.tx * sq, s.ry + s.jy * ej + s.dy * frac + s.ty * sq];
+    }
+
+    function stdev(arr){
+      var m = 0; arr.forEach(function(v){ m += v; }); m /= arr.length;
+      var s = 0; arr.forEach(function(v){ s += (v - m) * (v - m); });
+      return Math.sqrt(s / arr.length);
+    }
+
     function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-
-    function drawScatter(sim, p){
-      var cv = document.getElementById('scatter');
-      var ctx = cv.getContext('2d');
-      var W = cv.width, H = cv.height, pad = 40;
-      ctx.clearRect(0, 0, W, H);
-
-      var maxD = p.R * 1.3;
-      for (var i = 0; i < sim.ds.length; i++) maxD = Math.max(maxD, Math.abs(sim.xs[i]), Math.abs(sim.ys[i]));
-      var extent = niceCeil(maxD * 1.05);
-      var scale = (W / 2 - pad) / extent;
-      var cx = W / 2, cy = H / 2;
-
-      ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
-      ctx.fillStyle = css('--ink-muted');
-      ctx.font = '20px "IBM Plex Mono", monospace';
-      var step = niceStep(extent);
-      for (var g = -extent; g <= extent + 1e-9; g += step){
-        var gx = cx + g * scale, gy = cy - g * scale;
-        ctx.beginPath(); ctx.moveTo(gx, pad / 2); ctx.lineTo(gx, H - pad / 2); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(pad / 2, gy); ctx.lineTo(W - pad / 2, gy); ctx.stroke();
-      }
-      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      [-extent, 0, extent].forEach(function(v){ ctx.fillText(Math.round(v) + 'm', cx + v * scale, H - 22); });
-
-      var accent = css('--accent'), miss = css('--miss');
-      ctx.globalAlpha = 0.55;
-      for (var j = 0; j < sim.ds.length; j++){
-        ctx.fillStyle = sim.ds[j] <= p.R ? accent : miss;
-        ctx.fillRect(cx + sim.xs[j] * scale - 2, cy - sim.ys[j] * scale - 2, 4, 4);
-      }
-      ctx.globalAlpha = 1;
-
-      ctx.setLineDash([8, 6]); ctx.lineWidth = 2; ctx.strokeStyle = css('--ink-soft');
-      ctx.beginPath(); ctx.arc(cx, cy, p.R * scale, 0, Math.PI * 2); ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = css('--ink');
-      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = css('--ink-soft'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText('바람 →', pad / 2 + 4, pad / 2 + 4);
+    function hexRgb(hex){
+      var h = hex.replace('#', '');
+      if (h.length === 3) h = h.split('').map(function(c){ return c + c; }).join('');
+      var n = parseInt(h, 16);
+      return [n >> 16 & 255, n >> 8 & 255, n & 255];
     }
-
-    function niceStep(extent){
-      var raw = extent / 2;
+    function pct(x, dg){ return (x * 100).toFixed(dg === undefined ? 1 : dg) + '%'; }
+    function fmtInt(x){ return isFinite(x) ? Math.round(x).toLocaleString('ko-KR') : '—'; }
+    function fmtNum(x, dg){ return isFinite(x) ? x.toFixed(dg) : '—'; }
+    function niceStep(extent, parts){
+      var raw = extent / (parts || 2);
       var mag = Math.pow(10, Math.floor(Math.log10(raw)));
       var n = raw / mag;
       return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * mag;
     }
-    function niceCeil(v){
-      var s = niceStep(v);
-      return Math.ceil(v / s) * s;
+
+    function updateSeedUI(){
+      var t = typeWinged.checked ? 'winged' : 'round';
+      document.querySelectorAll('[data-type]').forEach(function(el){
+        el.hidden = el.getAttribute('data-type') !== t;
+      });
     }
 
-    function distBins(sim, p){
-      var w = p.R / 2;
-      var nb = 8;
-      var counts = new Array(nb + 1).fill(0);
-      for (var i = 0; i < sim.ds.length; i++){
-        var b = Math.floor(sim.ds[i] / w);
-        counts[Math.min(b, nb)]++;
+    // ---------- charts ----------
+    function drawSide(p, seeds){
+      var cv = document.getElementById('side');
+      var ctx = cv.getContext('2d');
+      var W = cv.width, H = cv.height;
+      var padL = 60, padR = 20, padT = 30, padB = 44;
+      ctx.clearRect(0, 0, W, H);
+
+      var xmin = -p.R, xmax = p.R;
+      seeds.forEach(function(s){
+        xmin = Math.min(xmin, s.rx, s.x); xmax = Math.max(xmax, s.rx, s.x);
+      });
+      var span = xmax - xmin;
+      xmin -= span * 0.06; xmax += span * 0.06;
+      var sx = function(x){ return padL + (x - xmin) / (xmax - xmin) * (W - padL - padR); };
+      var sy = function(z){ return H - padB - z / p.h * (H - padT - padB); };
+
+      ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
+      ctx.fillStyle = css('--ink-muted'); ctx.font = '13px "IBM Plex Mono", monospace';
+      var zs = niceStep(p.h, 4);
+      ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+      for (var z = 0; z <= p.h + 1e-9; z += zs){
+        ctx.beginPath(); ctx.moveTo(padL, sy(z)); ctx.lineTo(W - padR, sy(z)); ctx.stroke();
+        ctx.fillText(Math.round(z) + 'm', padL - 8, sy(z));
       }
-      var n = sim.ds.length, cum = 0;
-      return counts.map(function(c, i){
-        cum += c;
-        var lo = i * w, hi = (i + 1) * w;
-        return {
-          label: i < nb ? fmtM(lo) + '–' + fmtM(hi) + 'm' : fmtM(lo) + 'm 이상',
-          p: c / n, cum: cum / n, inside: hi <= p.R + 1e-9
-        };
-      });
-    }
-    function fmtM(v){ return Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : v.toFixed(1); }
-
-    function drawHist(bins){
-      var host = document.getElementById('hist');
-      var W = 400, H = 300, padL = 40, padR = 8, padT = 12, padB = 56;
-      var maxP = Math.max.apply(null, bins.map(function(b){ return b.p; }));
-      var yMax = Math.max(0.05, Math.ceil(maxP * 20) / 20);
-      var plotW = W - padL - padR, plotH = H - padT - padB;
-      var bw = plotW / bins.length;
-      var ink = css('--ink-soft'), grid = css('--grid'), accent = css('--accent'), miss = css('--miss');
-
-      var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="거리별 착지 비율 막대그래프">';
-      for (var k = 0; k <= 4; k++){
-        var gv = yMax * k / 4, gy = padT + plotH - gv / yMax * plotH;
-        svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + gy + '" y2="' + gy + '" stroke="' + grid + '" stroke-width="1"/>';
-        svg += '<text x="' + (padL - 6) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="11" fill="' + ink + '" font-family="IBM Plex Mono, monospace">' + Math.round(gv * 100) + '%</text>';
+      var xs = niceStep(xmax - xmin, 6);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      for (var x = Math.ceil(xmin / xs) * xs; x <= xmax; x += xs){
+        ctx.beginPath(); ctx.moveTo(sx(x), padT); ctx.lineTo(sx(x), H - padB); ctx.stroke();
+        ctx.fillText(Math.round(x) + 'm', sx(x), H - padB + 8);
       }
-      var boundaryX = null;
-      bins.forEach(function(b, i){
-        var x = padL + i * bw + 1, w = bw - 2;
-        var h = b.p / yMax * plotH, y = padT + plotH - h;
-        var r = Math.min(4, w / 2, h);
-        svg += '<path data-i="' + i + '" d="' + roundTop(x, y, w, h, r) + '" fill="' + (b.inside ? accent : miss) + '"/>';
-        svg += '<rect data-i="' + i + '" x="' + (padL + i * bw) + '" y="' + padT + '" width="' + bw + '" height="' + plotH + '" fill="transparent" class="hit"/>';
-        svg += '<text x="' + (padL + i * bw + bw / 2) + '" y="' + (H - padB + 14) + '" text-anchor="end" font-size="10" fill="' + ink + '" font-family="IBM Plex Mono, monospace" transform="rotate(-40 ' + (padL + i * bw + bw / 2) + ' ' + (H - padB + 14) + ')">' + b.label + '</text>';
-        if (b.inside) boundaryX = padL + (i + 1) * bw;
+
+      var accent = css('--accent');
+      ctx.strokeStyle = accent; ctx.globalAlpha = 0.22; ctx.lineWidth = 1.2;
+      seeds.slice(0, 160).forEach(function(s){
+        ctx.beginPath();
+        var steps = 24;
+        for (var i = 0; i <= steps; i++){
+          var frac = i / steps;
+          var px = posAt(s, frac)[0];
+          var pz = s.hc * (1 - frac);
+          if (i === 0) ctx.moveTo(sx(px), sy(pz)); else ctx.lineTo(sx(px), sy(pz));
+        }
+        ctx.stroke();
       });
-      if (boundaryX !== null){
-        svg += '<line x1="' + boundaryX + '" x2="' + boundaryX + '" y1="' + padT + '" y2="' + (padT + plotH) + '" stroke="' + ink + '" stroke-width="1.5" stroke-dasharray="4 4"/>';
+      ctx.globalAlpha = 1;
+
+      ctx.strokeStyle = css('--ink-soft'); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(padL, sy(0)); ctx.lineTo(W - padR, sy(0)); ctx.stroke();
+      ctx.setLineDash([7, 5]); ctx.lineWidth = 3; ctx.strokeStyle = css('--ink');
+      ctx.beginPath(); ctx.moveTo(sx(-p.R), sy(0) + 1); ctx.lineTo(sx(p.R), sy(0) + 1); ctx.stroke();
+      ctx.setLineDash([]);
+
+      var relX = seeds.reduce(function(a, s){ return Math.min(a, s.rx); }, Infinity);
+      ctx.fillStyle = css('--ink');
+      ctx.beginPath(); ctx.arc(sx(relX), sy(p.h), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.font = '13px "IBM Plex Sans KR", sans-serif';
+      ctx.fillText('방출 지점', sx(relX) + 8, sy(p.h) - 4);
+      ctx.fillStyle = css('--ink-soft'); ctx.textAlign = 'right';
+      ctx.fillText('바람 →', W - padR - 4, padT - 8);
+    }
+
+    function drawHeat(p, sim, perDrop){
+      var cv = document.getElementById('heat');
+      var ctx = cv.getContext('2d');
+      var W = cv.width, pad = 36;
+      ctx.clearRect(0, 0, W, W);
+
+      var dists = [];
+      for (var i = 0; i < sim.xs.length; i += 5) dists.push(Math.max(Math.abs(sim.xs[i]), Math.abs(sim.ys[i])));
+      dists.sort(function(a, b){ return a - b; });
+      var p99 = dists[Math.floor(dists.length * 0.99)] || p.R;
+      var raw = Math.max(p.R * 1.4, p99 * 1.05);
+      var step = niceStep(raw, 2);
+      var extent = Math.ceil(raw / step) * step;
+      var cell = 2 * extent / GRID;
+      var counts = new Float64Array(GRID * GRID);
+      for (var j = 0; j < sim.xs.length; j++){
+        var gx = Math.floor((sim.xs[j] + extent) / cell), gy = Math.floor((sim.ys[j] + extent) / cell);
+        if (gx >= 0 && gx < GRID && gy >= 0 && gy < GRID) counts[gy * GRID + gx]++;
       }
-      svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + (padT + plotH) + '" y2="' + (padT + plotH) + '" stroke="' + ink + '" stroke-width="1"/>';
-      svg += '</svg><div class="tip" id="histTip" hidden></div>';
-      host.innerHTML = svg;
+      var scaleToDensity = perDrop / (sim.nDrops * sim.nSeeds) / (cell * cell);
+      var dens = new Float64Array(GRID * GRID), vmax = 0;
+      for (var c = 0; c < counts.length; c++){ dens[c] = counts[c] * scaleToDensity; vmax = Math.max(vmax, dens[c]); }
 
-      var tip = document.getElementById('histTip');
-      host.querySelectorAll('rect.hit').forEach(function(rect){
-        rect.addEventListener('mousemove', function(e){
-          var b = bins[+rect.getAttribute('data-i')];
-          tip.textContent = b.label + ' · ' + pct(b.p) + ' (누적 ' + pct(b.cum) + ')';
-          var hb = host.getBoundingClientRect();
-          tip.style.left = Math.min(e.clientX - hb.left + 12, hb.width - 180) + 'px';
-          tip.style.top = (e.clientY - hb.top - 30) + 'px';
-          tip.hidden = false;
-        });
-        rect.addEventListener('mouseleave', function(){ tip.hidden = true; });
-      });
-    }
-    function roundTop(x, y, w, h, r){
-      if (h <= 0) return '';
-      return 'M' + x + ',' + (y + h) + 'V' + (y + r) + 'Q' + x + ',' + y + ' ' + (x + r) + ',' + y +
-        'H' + (x + w - r) + 'Q' + (x + w) + ',' + y + ' ' + (x + w) + ',' + (y + r) + 'V' + (y + h) + 'Z';
+      var plot = W - 2 * pad, cpx = plot / GRID;
+      var rgb = hexRgb(css('--accent'));
+      ctx.fillStyle = css('--paper'); ctx.fillRect(pad, pad, plot, plot);
+      for (var yy = 0; yy < GRID; yy++){
+        for (var xx = 0; xx < GRID; xx++){
+          var v = dens[yy * GRID + xx];
+          if (v <= 0) continue;
+          var a = Math.pow(v / vmax, 0.6);
+          ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (0.08 + 0.92 * a).toFixed(3) + ')';
+          ctx.fillRect(pad + xx * cpx, pad + (GRID - 1 - yy) * cpx, cpx + 0.5, cpx + 0.5);
+        }
+      }
+      var toPx = function(x){ return pad + (x + extent) / (2 * extent) * plot; };
+      var toPy = function(y){ return pad + (extent - y) / (2 * extent) * plot; };
+
+      ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
+      ctx.fillStyle = css('--ink-muted'); ctx.font = '13px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      for (var g = -extent; g <= extent + 1e-9; g += step){
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath(); ctx.moveTo(toPx(g), pad); ctx.lineTo(toPx(g), pad + plot); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad, toPy(g)); ctx.lineTo(pad + plot, toPy(g)); ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillText(Math.round(g) + 'm', toPx(g), pad + plot + 6);
+      }
+      ctx.setLineDash([7, 5]); ctx.lineWidth = 2; ctx.strokeStyle = css('--ink');
+      ctx.beginPath(); ctx.arc(toPx(0), toPy(0), p.R / (2 * extent) * plot, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = css('--ink-soft'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.font = '13px "IBM Plex Sans KR", sans-serif';
+      ctx.fillText('바람 →', pad + 6, pad + 6);
+
+      document.getElementById('cbar').style.background =
+        'linear-gradient(90deg, rgba(' + rgb.join(',') + ',0.08), rgba(' + rgb.join(',') + ',1))';
+      document.getElementById('cbarMax').textContent = fmtNum(vmax, vmax < 1 ? 3 : 1);
+
+      heatState = { extent: extent, cell: cell, dens: dens, pad: pad, plot: plot, W: W, p: p };
+      return { dens: dens, cell: cell, extent: extent };
     }
 
-    function renderDistTable(bins, p){
-      var g = p.germ / 100;
-      var html = '<thead><tr><th>목표 중심과의 거리</th><th>착지 확률</th><th>누적 확률</th><th>발아까지 확률</th><th>구분</th></tr></thead><tbody>';
-      bins.forEach(function(b){
-        html += '<tr><td>' + b.label + '</td><td>' + pct(b.p) + '</td><td>' + pct(b.cum) + '</td><td>' + pct(b.p * g) + '</td><td style="font-family:inherit">' + (b.inside ? '목표 안' : '목표 밖') + '</td></tr>';
+    var heatState = null;
+    (function bindHeatTip(){
+      var cv = document.getElementById('heat');
+      var tip = document.getElementById('heatTip');
+      cv.addEventListener('mousemove', function(e){
+        if (!heatState) return;
+        var rect = cv.getBoundingClientRect();
+        var k = heatState.W / rect.width;
+        var px = (e.clientX - rect.left) * k, py = (e.clientY - rect.top) * k;
+        var x = (px - heatState.pad) / heatState.plot * 2 * heatState.extent - heatState.extent;
+        var y = heatState.extent - (py - heatState.pad) / heatState.plot * 2 * heatState.extent;
+        if (Math.abs(x) > heatState.extent || Math.abs(y) > heatState.extent){ tip.hidden = true; return; }
+        var gx = Math.floor((x + heatState.extent) / heatState.cell), gy = Math.floor((y + heatState.extent) / heatState.cell);
+        var v = heatState.dens[gy * GRID + gx] || 0;
+        var grow = v * heatState.p.germ * heatState.p.surv;
+        tip.innerHTML = '(' + x.toFixed(0) + ', ' + y.toFixed(0) + ') m<br>씨앗 ' + fmtNum(v, 3) + '개/m²<br>나무 ' + fmtNum(grow * 10000, 0) + '그루/ha';
+        var left = e.clientX - rect.left + 14;
+        if (left > rect.width - 150) left = e.clientX - rect.left - 150;
+        tip.style.left = left + 'px';
+        tip.style.top = (e.clientY - rect.top - 10) + 'px';
+        tip.hidden = false;
       });
-      document.getElementById('distTable').innerHTML = html + '</tbody>';
+      cv.addEventListener('mouseleave', function(){ tip.hidden = true; });
+    })();
+
+    function coverage(p, heat, k){
+      var targetPerM2 = p.density / 10000;
+      var inside = 0, ok = 0;
+      for (var gy = 0; gy < GRID; gy++){
+        for (var gx = 0; gx < GRID; gx++){
+          var cx = -heat.extent + (gx + 0.5) * heat.cell, cy = -heat.extent + (gy + 0.5) * heat.cell;
+          if (cx * cx + cy * cy > p.R * p.R) continue;
+          inside++;
+          if (k * heat.dens[gy * GRID + gx] * p.germ * p.surv >= targetPerM2) ok++;
+        }
+      }
+      return inside ? ok / inside : 0;
+    }
+
+    function needFor(p, pLand){
+      var area = Math.PI * p.R * p.R;
+      var trees = p.density * area / 10000;
+      var pf = pLand * p.germ * p.surv;
+      var need = pf > 0 ? Math.ceil(trees / pf) : Infinity;
+      var perDrop = Math.floor(p.payload / p.seedMass);
+      var drops = perDrop > 0 && isFinite(need) ? Math.ceil(need / perDrop) : Infinity;
+      return { area: area, trees: trees, pf: pf, need: need, perDrop: perDrop, drops: drops };
     }
 
     function renderWindTable(p){
       var speeds = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       var nearest = speeds.reduce(function(a, b){ return Math.abs(b - p.U) < Math.abs(a - p.U) ? b : a; });
-      var g = p.germ / 100;
-      var html = '<thead><tr><th>평균 풍속</th><th>평균 표류 거리</th><th>목표 착지 확률</th><th>최종 성공 확률</th><th>예상 성공 씨앗</th></tr></thead><tbody>';
+      var html = '<thead><tr><th>평균 풍속</th><th>평균 표류 거리</th><th>착지 확률</th><th>최종 성공 확률</th><th>필요 씨앗 수</th><th>투하 횟수</th></tr></thead><tbody>';
       speeds.forEach(function(u, i){
         var q = Object.assign({}, p, { U: u });
-        var s = simulate(q, N_WIND, 1000 + i);
-        html += '<tr' + (u === nearest ? ' class="current"' : '') + '><td>' + u + ' m/s</td><td>' + (u * s.t).toFixed(1) + ' m</td><td>' + pct(s.pLand) + '</td><td>' + pct(s.pLand * g) + '</td><td>' + Math.round(p.nSeeds * s.pLand * g) + '개</td></tr>';
+        var s = simulate(q, W_DROPS, W_SEEDS, 1000 + i);
+        var nf = needFor(q, s.pLand);
+        var drift = u * (p.h / p.vtMean);
+        html += '<tr' + (u === nearest ? ' class="current"' : '') + '><td>' + u + ' m/s</td><td>' + drift.toFixed(1) + ' m</td><td>' + pct(s.pLand) + '</td><td>' + pct(nf.pf, 2) + '</td><td>' + fmtInt(nf.need) + '개</td><td>' + fmtInt(nf.drops) + '회</td></tr>';
       });
       document.getElementById('windTable').innerHTML = html + '</tbody>';
     }
 
-    function run(){
-      var p = readParams();
-      var sim = simulate(p, N, 42);
-      var g = p.germ / 100;
-      var final = sim.pLand * g;
-
-      document.getElementById('pLand').textContent = pct(sim.pLand);
-      document.getElementById('pGerm').textContent = pct(g, 0);
-      document.getElementById('pFinal').textContent = pct(final);
-      document.getElementById('expected').textContent = Math.round(p.nSeeds * final) + '개';
-      document.getElementById('expectedSub').textContent = '씨앗 ' + p.nSeeds + '개 중';
-
-      var drift = p.U * sim.t;
-      document.getElementById('physics').innerHTML =
-        '낙하 시간 = 고도 ÷ 낙하 속도 = ' + p.h + ' ÷ ' + p.vt + ' = <b>' + sim.t.toFixed(1) + '초</b> · ' +
-        '평균 표류 거리 = 풍속 × 낙하 시간 = ' + p.U + ' × ' + sim.t.toFixed(1) + ' = <b>' + drift.toFixed(1) + 'm</b>' +
-        (p.aim ? ' · 그래서 목표보다 바람 쪽으로 <b>' + drift.toFixed(1) + 'm</b> 앞에서 방출합니다.' : ' · 조준 보정을 끄면 착지 중심이 이만큼 바람 방향으로 밀립니다.');
-
-      drawScatter(sim, p);
-      var bins = distBins(sim, p);
-      drawHist(bins);
-      renderDistTable(bins, p);
-      renderWindTable(p);
+    function renderDistTable(p, sim){
+      var w = p.R / 2, nb = 8;
+      var counts = new Array(nb + 1).fill(0);
+      for (var i = 0; i < sim.xs.length; i++){
+        var d = Math.sqrt(sim.xs[i] * sim.xs[i] + sim.ys[i] * sim.ys[i]);
+        counts[Math.min(Math.floor(d / w), nb)]++;
+      }
+      var n = sim.xs.length, cum = 0, g = p.germ * p.surv;
+      var fm = function(v){ return Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : v.toFixed(1); };
+      var html = '<thead><tr><th>중심과의 거리</th><th>착지 확률</th><th>누적 확률</th><th>나무까지 확률</th><th>구분</th></tr></thead><tbody>';
+      counts.forEach(function(c, i){
+        cum += c;
+        var lo = i * w, hi = (i + 1) * w;
+        var label = i < nb ? fm(lo) + '–' + fm(hi) + 'm' : fm(lo) + 'm 이상';
+        html += '<tr><td>' + label + '</td><td>' + pct(c / n) + '</td><td>' + pct(cum / n) + '</td><td>' + pct(c / n * g, 2) + '</td><td style="font-family:inherit">' + (hi <= p.R + 1e-9 ? '복원 지역 안' : '밖') + '</td></tr>';
+      });
+      document.getElementById('distTable').innerHTML = html + '</tbody>';
     }
 
+    function run(){
+      var p = readParams();
+
+      var vtNote = p.type === 'round'
+        ? '종단속도 v = √(2mg / ρ·Cd·A) = √(2 × ' + (p.massRound / 1000).toExponential(2) + 'kg × 9.81 / (1.225 × ' + p.cd + ' × ' + (Math.PI * Math.pow(p.diam / 1000, 2) / 4).toExponential(2) + 'm²)) = <b>' + p.vtMean.toFixed(2) + ' m/s</b>'
+        : '날개 씨앗 낙하 속도 (입력값) = <b>' + p.vtMean.toFixed(2) + ' m/s</b>';
+      document.getElementById('vtDerived').innerHTML = vtNote;
+
+      var sim = simulate(p, DROPS, SEEDS, 42);
+      var nf = needFor(p, sim.pLand);
+
+      document.getElementById('simInfo').textContent = '투하 ' + DROPS + '회 × 씨앗 ' + SEEDS + '개 가상 낙하';
+      document.getElementById('pLand').textContent = pct(sim.pLand);
+      document.getElementById('pGrow').textContent = pct(p.germ * p.surv);
+      document.getElementById('pFinal').textContent = pct(nf.pf, 2);
+      document.getElementById('trees').textContent = fmtInt(nf.trees) + '그루';
+      document.getElementById('treesSub').textContent = '면적 ' + fmtInt(nf.area) + 'm² (' + (nf.area / 10000).toFixed(2) + 'ha) × ' + fmtInt(p.density) + '그루/ha';
+      document.getElementById('needSeeds').textContent = fmtInt(nf.need) + '개';
+      document.getElementById('needSeedsSub').textContent = isFinite(nf.need) ? '총 ' + fmtNum(nf.need * p.seedMass, 1) + 'g' : '성공 확률이 0이라 계산 불가';
+      document.getElementById('perDrop').textContent = fmtInt(nf.perDrop) + '개';
+      document.getElementById('perDropSub').textContent = p.payload + 'g ÷ ' + p.seedMass + 'g';
+      document.getElementById('drops').textContent = fmtInt(nf.drops) + '회';
+
+      var tNom = p.h / p.vtMean;
+      document.getElementById('formula').innerHTML =
+        '낙하 시간 = ' + p.h + 'm ÷ ' + p.vtMean.toFixed(2) + 'm/s = <b>' + tNom.toFixed(1) + '초</b> · ' +
+        '평균 표류 거리 = ' + p.U + 'm/s × ' + tNom.toFixed(1) + '초 = <b>' + (p.U * tNom).toFixed(1) + 'm</b><br>' +
+        '필요한 씨앗 수 = 목표 나무 수 ÷ 최종 성공 확률 = ' + fmtInt(nf.trees) + ' ÷ ' + pct(nf.pf, 2) + ' = <b>' + fmtInt(nf.need) + '개</b>';
+
+      var seeds = nominalDrop(p, 1500);
+      var sx = stdev(seeds.map(function(s){ return s.x; }));
+      var sy = stdev(seeds.map(function(s){ return s.y; }));
+      var mid = seeds.map(function(s){ return posAt(s, 0.5); });
+      var spreadMid = Math.hypot(stdev(mid.map(function(q){ return q[0]; })), stdev(mid.map(function(q){ return q[1]; })));
+      var ratio = Math.hypot(sx, sy) / Math.max(spreadMid, 1e-6);
+      var body = ratio > 1.7 ? '원뿔 (높이에 비례해 퍼짐)' : ratio > 1.25 ? '포물면 (√시간에 비례해 퍼짐)' : '원기둥 (내려가도 거의 안 퍼짐)';
+      if (p.U > 0.5) body = '바람 쪽으로 기울어진 ' + body;
+      var foot = Math.max(sx, sy) / Math.max(Math.min(sx, sy), 1e-6) < 1.3 ? '거의 원형'
+        : sx > sy ? '바람 방향으로 길쭉한 타원' : '옆 방향으로 넓은 타원';
+      document.getElementById('shapeSub').innerHTML =
+        '낙하 모양: <b>' + body + '</b> — 땅에서의 퍼짐이 중간 높이의 <b>' + ratio.toFixed(2) + '배</b> (원뿔이면 2배, 포물면이면 약 1.4배, 원기둥이면 1배).<br>' +
+        '바닥 모양: <b>' + foot + '</b> — 바람 방향 ±' + sx.toFixed(1) + 'm, 옆 방향 ±' + sy.toFixed(1) + 'm (표준편차). 선 하나가 씨앗 하나의 경로입니다.';
+      drawSide(p, seeds);
+
+      var heat = drawHeat(p, sim, nf.perDrop);
+      var cov = isFinite(nf.drops) ? coverage(p, heat, nf.drops) : 0;
+      var insight = document.getElementById('insight');
+      insight.hidden = false;
+      if (!isFinite(nf.drops)){
+        insight.className = 'insight warn';
+        insight.textContent = '씨앗이 복원 지역에 거의 떨어지지 않아 필요량을 계산할 수 없어요. 조준 보정을 켜거나, 방출 고도를 낮추거나, 풍속이 약할 때 투하하는 조건을 검토해보세요.';
+      } else if (cov < 0.8){
+        insight.className = 'insight warn';
+        insight.textContent = '씨앗 개수는 ' + nf.drops + '회 투하로 채워지지만, 모두 같은 지점을 조준하면 복원 지역 중 목표 밀도를 채우는 면적은 ' + pct(cov, 0) + '뿐이에요. 가운데는 빽빽하고 가장자리는 부족해요. 투하 지점을 여러 곳으로 나누거나 살포 지속 시간을 늘려서 고르게 퍼뜨리는 방법을 검토해보세요.';
+      } else {
+        insight.className = 'insight ok';
+        insight.textContent = nf.drops + '회 투하로 복원 지역의 ' + pct(cov, 0) + ' 면적이 목표 밀도를 채워요.';
+      }
+
+      renderWindTable(p);
+      renderDistTable(p, sim);
+    }
+
+    typeRound.addEventListener('change', function(){ updateSeedUI(); run(); });
+    typeWinged.addEventListener('change', function(){ updateSeedUI(); run(); });
+    aimEl.addEventListener('change', run);
     document.getElementById('runBtn').addEventListener('click', run);
     document.getElementById('resetBtn').addEventListener('click', function(){
-      fieldIds.forEach(function(id){ els[id].value = defaults[id]; });
-      aimEl.checked = true;
-      run();
+      ids.forEach(function(id){ els[id].value = defaults[id]; });
+      aimEl.checked = true; typeRound.checked = true;
+      updateSeedUI(); run();
     });
-    fieldIds.forEach(function(id){
+    ids.forEach(function(id){
       els[id].addEventListener('keydown', function(e){ if (e.key === 'Enter') run(); });
     });
-    aimEl.addEventListener('change', run);
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', run);
 
+    updateSeedUI();
     run();
   })();
 </script>
