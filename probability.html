@@ -372,12 +372,12 @@
   <section class="card">
     <div class="card-head"><h2>위에서 본 씨앗 밀도</h2><span>투하 1회당 기대값</span></div>
     <div class="card-body">
-      <p class="chart-sub">바람 예측 오차까지 포함해 투하를 여러 번 했을 때의 평균입니다. 색이 진할수록 1m²에 씨앗이 많이 떨어집니다. 마우스를 올리면 값이 보여요.</p>
+      <p class="chart-sub">바람 예측 오차까지 포함해 투하를 여러 번 했을 때의 평균입니다. 색이 진할수록 씨앗이 많이 떨어집니다. 마우스를 올리면 100m²(10m × 10m)당 씨앗 수와, 발아율·생존율을 곱한 나무 수를 목표와 함께 보여줘요.</p>
       <div class="heat-wrap">
         <canvas id="heat" width="600" height="600" role="img" aria-label="씨앗 밀도 지도"></canvas>
         <div class="tip" id="heatTip" hidden></div>
       </div>
-      <div class="colorbar"><span>0</span><span class="bar" id="cbar"></span><span id="cbarMax">-</span><span>개/m²</span></div>
+      <div class="colorbar"><span>0</span><span class="bar" id="cbar"></span><span id="cbarMax">-</span><span>개 (100m²당 씨앗)</span></div>
       <div class="legend"><span><i></i>복원 지역 경계</span></div>
     </div>
   </section>
@@ -767,7 +767,7 @@
 
       document.getElementById('cbar').style.background =
         'linear-gradient(90deg, rgba(' + rgb.join(',') + ',0.08), rgba(' + rgb.join(',') + ',1))';
-      document.getElementById('cbarMax').textContent = fmtNum(vmax, vmax < 1 ? 3 : 1);
+      document.getElementById('cbarMax').textContent = fmtNum(vmax * 100, 1);
 
       heatState = { extent: extent, cell: cell, dens: dens, pad: pad, plot: plot, W: W, p: p };
       return { dens: dens, cell: cell, extent: extent };
@@ -787,10 +787,12 @@
         if (Math.abs(x) > heatState.extent || Math.abs(y) > heatState.extent){ tip.hidden = true; return; }
         var gx = Math.floor((x + heatState.extent) / heatState.cell), gy = Math.floor((y + heatState.extent) / heatState.cell);
         var v = heatState.dens[gy * GRID + gx] || 0;
-        var grow = v * heatState.p.germ * heatState.p.surv;
-        tip.innerHTML = '(' + x.toFixed(0) + ', ' + y.toFixed(0) + ') m<br>씨앗 ' + fmtNum(v, 3) + '개/m²<br>나무 ' + fmtNum(grow * 10000, 0) + '그루/ha';
+        var seeds100 = v * 100;
+        var trees100 = seeds100 * heatState.p.germ * heatState.p.surv;
+        var target100 = heatState.p.density / 100;
+        tip.innerHTML = '(' + x.toFixed(0) + ', ' + y.toFixed(0) + ') m · 100m²당<br>씨앗 ' + fmtNum(seeds100, 1) + '개<br>나무 ' + fmtNum(trees100, 1) + '그루 (목표 ' + fmtNum(target100, 1) + '그루)';
         var left = e.clientX - rect.left + 14;
-        if (left > rect.width - 150) left = e.clientX - rect.left - 150;
+        if (left > rect.width - 230) left = e.clientX - rect.left - 230;
         tip.style.left = left + 'px';
         tip.style.top = (e.clientY - rect.top - 10) + 'px';
         tip.hidden = false;
