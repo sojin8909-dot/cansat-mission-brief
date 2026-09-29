@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>씨앗 살포 확률 계산기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    color-scheme: light dark;
+    --ink:#1A2733;
+    --ink-soft:#55697C;
+    --ink-muted:#8597A5;
+    --paper:#F2F6F7;
+    --surface:#FFFFFF;
+    --line:#D5E0E3;
+    --grid:#E6EDEF;
+    --accent:#0E7A82;
+    --accent-strong:#095960;
+    --accent-soft:#E3F1F1;
+    --miss:#B9C6CC;
+    --shadow: 0 1px 2px rgba(20,40,45,.06), 0 8px 24px rgba(20,40,45,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ink:#E8EFF1;
+      --ink-soft:#9FB4BE;
+      --ink-muted:#6F848E;
+      --paper:#0D1518;
+      --surface:#151F23;
+      --line:#28383E;
+      --grid:#1F2C31;
+      --accent:#49D6DB;
+      --accent-strong:#7CE6E9;
+      --accent-soft:#122C2E;
+      --miss:#3E5058;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{ margin:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+    padding-inline:20px;
+    padding-block:40px 64px;
+  }
+  .page{ max-width:880px; margin-inline:auto; display:flex; flex-direction:column; gap:24px; }
+  .backlink{ font-size:13px; color:var(--ink-soft); text-decoration:none; }
+  .backlink:hover{ color:var(--accent-strong); }
+
+  header.masthead{ display:flex; flex-direction:column; gap:8px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+  .eyebrow{ font-family:'IBM Plex Mono'; font-size:12px; letter-spacing:.08em; color:var(--accent); font-weight:600; }
+  h1{ margin:0; font-size:clamp(26px,5vw,34px); font-weight:700; text-wrap:balance; }
+  .lede{ margin:0; max-width:62ch; color:var(--ink-soft); font-size:15px; line-height:1.6; }
+
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); }
+  .card-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:18px 20px 0; flex-wrap:wrap; }
+  .card-head h2{ font-size:15px; margin:0; font-weight:700; }
+  .card-head span{ font-size:12px; color:var(--ink-soft); font-family:'IBM Plex Mono'; }
+  .card-body{ padding:16px 20px 20px; }
+
+  .inputs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:14px 18px; }
+  .field{ display:flex; flex-direction:column; gap:5px; }
+  .field label{ font-size:12.5px; font-weight:600; }
+  .field small{ font-size:11.5px; color:var(--ink-soft); line-height:1.45; }
+  .field input[type="number"]{
+    font-family:'IBM Plex Mono'; font-size:14px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line); border-radius:7px; padding:8px 10px;
+    font-variant-numeric:tabular-nums;
+  }
+  .field input:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+  .check{ display:flex; align-items:center; gap:8px; font-size:13px; margin-top:14px; }
+  .group-label{ grid-column:1/-1; font-size:12px; font-weight:600; color:var(--accent-strong); margin-top:4px; letter-spacing:.02em; }
+
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  button{
+    font-family:'IBM Plex Sans KR'; font-size:14px; font-weight:600; border-radius:7px; padding:10px 16px; cursor:pointer;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  }
+  button:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  button.primary{ background:var(--accent); border-color:var(--accent); color:#052322; }
+  button.primary:hover{ background:var(--accent-strong); border-color:var(--accent-strong); }
+  button.ghost:hover{ border-color:var(--accent); color:var(--accent-strong); }
+
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:12px; }
+  .stat{ border:1px solid var(--line); border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; gap:4px; }
+  .stat .k{ font-size:12px; color:var(--ink-soft); }
+  .stat .v{ font-family:'IBM Plex Mono'; font-size:24px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .stat .s{ font-size:11.5px; color:var(--ink-soft); line-height:1.45; }
+  .stat.hero{ background:var(--accent-soft); border-color:transparent; }
+  .stat.hero .v{ color:var(--accent-strong); }
+
+  .physics{ margin-top:14px; font-size:13px; color:var(--ink-soft); line-height:1.7; }
+  .physics b{ color:var(--ink); font-family:'IBM Plex Mono'; font-weight:600; }
+
+  .chart-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:720px){ .chart-grid{ grid-template-columns:1fr; } }
+  .chart-title{ font-size:13px; font-weight:600; margin-bottom:8px; }
+  .legend{ display:flex; gap:14px; font-size:12px; color:var(--ink-soft); margin-top:8px; flex-wrap:wrap; }
+  .legend i{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px; }
+  .legend i.ring{ background:transparent; border:2px dashed var(--ink-soft); }
+  canvas{ width:100%; max-width:100%; aspect-ratio:1/1; display:block; border-radius:6px; }
+
+  .hist{ position:relative; }
+  .hist svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .tip{
+    position:absolute; pointer-events:none; background:var(--ink); color:var(--surface);
+    font-size:12px; padding:6px 9px; border-radius:6px; white-space:nowrap; font-family:'IBM Plex Mono';
+  }
+
+  .table-wrap{ overflow-x:auto; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; }
+  th, td{ padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th:first-child, td:first-child{ text-align:left; }
+  th{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  td{ font-family:'IBM Plex Mono'; }
+  tr.current td{ background:var(--accent-soft); color:var(--accent-strong); font-weight:600; }
+  .note{ font-size:12px; color:var(--ink-soft); line-height:1.6; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <a class="backlink" href="index.html">← 미션 브리프로 돌아가기</a>
+
+  <header class="masthead">
+    <span class="eyebrow">씨앗 살포 미션 · 확률 시뮬레이션</span>
+    <h1>씨앗 살포 확률 계산기</h1>
+    <p class="lede">가정값을 넣으면 씨앗 수천 개를 가상으로 떨어뜨려서, <b>목표 지역에 떨어질 확률</b>과 <b>떨어진 뒤 발아까지 이어질 확률</b>을 계산합니다.</p>
+  </header>
+
+  <section class="card">
+    <div class="card-head"><h2>입력값</h2><span>가정값 · 문헌값</span></div>
+    <div class="card-body">
+      <div class="inputs">
+        <div class="group-label">낙하 조건</div>
+        <div class="field">
+          <label for="h">방출 고도 (m)</label>
+          <input type="number" id="h" value="100" min="1" step="1">
+          <small>씨앗 보관함을 여는 높이</small>
+        </div>
+        <div class="field">
+          <label for="vt">씨앗 낙하 속도 (m/s)</label>
+          <input type="number" id="vt" value="4" min="0.1" step="0.1">
+          <small>공기저항과 균형을 이룬 일정한 낙하 속도(종단속도)</small>
+        </div>
+        <div class="field">
+          <label for="relErr">방출 위치 오차 (m)</label>
+          <input type="number" id="relErr" value="5" min="0" step="0.5">
+          <small>GPS 오차 등으로 방출 지점이 어긋나는 정도 (표준편차)</small>
+        </div>
+
+        <div class="group-label">바람</div>
+        <div class="field">
+          <label for="U">평균 풍속 (m/s)</label>
+          <input type="number" id="U" value="3" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label for="sU">풍속 흔들림 (m/s)</label>
+          <input type="number" id="sU" value="1" min="0" step="0.1">
+          <small>풍속이 평균에서 얼마나 오르내리는지 (표준편차)</small>
+        </div>
+        <div class="field">
+          <label for="sTh">풍향 흔들림 (°)</label>
+          <input type="number" id="sTh" value="15" min="0" step="1">
+          <small>바람 방향이 얼마나 바뀌는지 (표준편차)</small>
+        </div>
+
+        <div class="group-label">목표 · 발아</div>
+        <div class="field">
+          <label for="R">목표 지역 반경 (m)</label>
+          <input type="number" id="R" value="20" min="1" step="1">
+          <small>이 원 안에 떨어지면 "목표 착지"로 인정</small>
+        </div>
+        <div class="field">
+          <label for="germ">발아율 (%)</label>
+          <input type="number" id="germ" value="70" min="0" max="100" step="1">
+          <small>문헌에서 찾은 종자 발아율</small>
+        </div>
+        <div class="field">
+          <label for="nSeeds">살포할 씨앗 수 (개)</label>
+          <input type="number" id="nSeeds" value="200" min="1" step="1">
+        </div>
+      </div>
+
+      <label class="check"><input type="checkbox" id="aim" checked> 바람만큼 미리 바람 쪽으로 옮겨서 방출하기 (조준 보정)</label>
+
+      <div class="actions">
+        <button class="primary" id="runBtn" type="button">계산하기</button>
+        <button class="ghost" id="resetBtn" type="button">기본값으로</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>결과</h2><span id="simInfo">씨앗 5,000개 가상 낙하</span></div>
+    <div class="card-body">
+      <div class="stats">
+        <div class="stat">
+          <span class="k">목표 지역 착지 확률</span>
+          <span class="v" id="pLand">-</span>
+          <span class="s">반경 안에 떨어진 비율</span>
+        </div>
+        <div class="stat">
+          <span class="k">발아율 (입력값)</span>
+          <span class="v" id="pGerm">-</span>
+          <span class="s">문헌값 가정</span>
+        </div>
+        <div class="stat hero">
+          <span class="k">최종 성공 확률</span>
+          <span class="v" id="pFinal">-</span>
+          <span class="s">착지 확률 × 발아율</span>
+        </div>
+        <div class="stat">
+          <span class="k">예상 성공 씨앗 수</span>
+          <span class="v" id="expected">-</span>
+          <span class="s" id="expectedSub">-</span>
+        </div>
+      </div>
+      <p class="physics" id="physics"></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>착지 분포</h2><span>목표 중심 = (0, 0)</span></div>
+    <div class="card-body">
+      <div class="chart-grid">
+        <div>
+          <div class="chart-title">위에서 본 착지 지점</div>
+          <canvas id="scatter" width="640" height="640" role="img" aria-label="씨앗 착지 지점 산점도"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--accent)"></i>목표 안</span>
+            <span><i style="background:var(--miss)"></i>목표 밖</span>
+            <span><i class="ring"></i>목표 반경</span>
+          </div>
+        </div>
+        <div>
+          <div class="chart-title">목표 중심으로부터 거리별 비율</div>
+          <div class="hist" id="hist"></div>
+          <p class="note">점선 왼쪽 막대가 목표 반경 안쪽입니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>확률분포표 · 거리별</h2><span>착지 지점이 목표에서 얼마나 떨어졌나</span></div>
+    <div class="card-body">
+      <div class="table-wrap"><table id="distTable"></table></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>확률분포표 · 풍속별</h2><span>다른 조건은 그대로, 평균 풍속만 바꿨을 때</span></div>
+    <div class="card-body">
+      <div class="table-wrap"><table id="windTable"></table></div>
+      <p class="note">강조된 줄이 현재 입력한 평균 풍속에 가장 가까운 값입니다. 발표 때 "풍속이 몇 m/s 이하일 때만 살포한다" 같은 운용 조건을 정하는 근거로 쓸 수 있어요.</p>
+    </div>
+  </section>
+
+  <footer class="note" style="border-top:1px solid var(--line); padding-top:16px;">
+    <b>모델 가정</b> — 씨앗은 방출 직후 바로 일정한 낙하 속도에 도달하고, 낙하하는 동안 바람과 같은 속도로 옆으로 밀린다고 가정했습니다. 풍속·풍향·방출 위치 오차는 정규분포로 무작위 생성합니다. 발아율은 착지 위치와 상관없이 일정하다고 가정했습니다. 실제 낙하 실험 데이터가 생기면 입력값을 실측값으로 바꿔 검증해보세요.
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    var N = 5000;
+    var N_WIND = 2000;
+    var defaults = { h:100, vt:4, relErr:5, U:3, sU:1, sTh:15, R:20, germ:70, nSeeds:200 };
+    var fieldIds = Object.keys(defaults);
+    var els = {};
+    fieldIds.forEach(function(id){ els[id] = document.getElementById(id); });
+    var aimEl = document.getElementById('aim');
+
+    function mulberry32(seed){
+      return function(){
+        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+        var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    function normalGen(rand){
+      return function(){
+        var u = 0, v = 0;
+        while (u === 0) u = rand();
+        while (v === 0) v = rand();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      };
+    }
+
+    function readParams(){
+      var p = {};
+      fieldIds.forEach(function(id){
+        var v = parseFloat(els[id].value);
+        p[id] = isFinite(v) ? v : defaults[id];
+      });
+      p.vt = Math.max(p.vt, 0.1);
+      p.h = Math.max(p.h, 0.1);
+      p.R = Math.max(p.R, 0.1);
+      p.germ = Math.min(Math.max(p.germ, 0), 100);
+      p.aim = aimEl.checked;
+      return p;
+    }
+
+    function simulate(p, n, seed){
+      var randn = normalGen(mulberry32(seed));
+      var t = p.h / p.vt;
+      var aimOffset = p.aim ? p.U * t : 0;
+      var xs = new Float32Array(n), ys = new Float32Array(n), ds = new Float32Array(n);
+      var hits = 0;
+      for (var i = 0; i < n; i++){
+        var u = Math.max(0, p.U + p.sU * randn());
+        var th = (p.sTh * randn()) * Math.PI / 180;
+        var x = u * t * Math.cos(th) - aimOffset + p.relErr * randn();
+        var y = u * t * Math.sin(th) + p.relErr * randn();
+        var d = Math.sqrt(x * x + y * y);
+        xs[i] = x; ys[i] = y; ds[i] = d;
+        if (d <= p.R) hits++;
+      }
+      return { xs:xs, ys:ys, ds:ds, pLand: hits / n, t:t };
+    }
+
+    function pct(x, digits){ return (x * 100).toFixed(digits === undefined ? 1 : digits) + '%'; }
+    function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+    function drawScatter(sim, p){
+      var cv = document.getElementById('scatter');
+      var ctx = cv.getContext('2d');
+      var W = cv.width, H = cv.height, pad = 40;
+      ctx.clearRect(0, 0, W, H);
+
+      var maxD = p.R * 1.3;
+      for (var i = 0; i < sim.ds.length; i++) maxD = Math.max(maxD, Math.abs(sim.xs[i]), Math.abs(sim.ys[i]));
+      var extent = niceCeil(maxD * 1.05);
+      var scale = (W / 2 - pad) / extent;
+      var cx = W / 2, cy = H / 2;
+
+      ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
+      ctx.fillStyle = css('--ink-muted');
+      ctx.font = '20px "IBM Plex Mono", monospace';
+      var step = niceStep(extent);
+      for (var g = -extent; g <= extent + 1e-9; g += step){
+        var gx = cx + g * scale, gy = cy - g * scale;
+        ctx.beginPath(); ctx.moveTo(gx, pad / 2); ctx.lineTo(gx, H - pad / 2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad / 2, gy); ctx.lineTo(W - pad / 2, gy); ctx.stroke();
+      }
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      [-extent, 0, extent].forEach(function(v){ ctx.fillText(Math.round(v) + 'm', cx + v * scale, H - 22); });
+
+      var accent = css('--accent'), miss = css('--miss');
+      ctx.globalAlpha = 0.55;
+      for (var j = 0; j < sim.ds.length; j++){
+        ctx.fillStyle = sim.ds[j] <= p.R ? accent : miss;
+        ctx.fillRect(cx + sim.xs[j] * scale - 2, cy - sim.ys[j] * scale - 2, 4, 4);
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.setLineDash([8, 6]); ctx.lineWidth = 2; ctx.strokeStyle = css('--ink-soft');
+      ctx.beginPath(); ctx.arc(cx, cy, p.R * scale, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = css('--ink');
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = css('--ink-soft'); ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText('바람 →', pad / 2 + 4, pad / 2 + 4);
+    }
+
+    function niceStep(extent){
+      var raw = extent / 2;
+      var mag = Math.pow(10, Math.floor(Math.log10(raw)));
+      var n = raw / mag;
+      return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * mag;
+    }
+    function niceCeil(v){
+      var s = niceStep(v);
+      return Math.ceil(v / s) * s;
+    }
+
+    function distBins(sim, p){
+      var w = p.R / 2;
+      var nb = 8;
+      var counts = new Array(nb + 1).fill(0);
+      for (var i = 0; i < sim.ds.length; i++){
+        var b = Math.floor(sim.ds[i] / w);
+        counts[Math.min(b, nb)]++;
+      }
+      var n = sim.ds.length, cum = 0;
+      return counts.map(function(c, i){
+        cum += c;
+        var lo = i * w, hi = (i + 1) * w;
+        return {
+          label: i < nb ? fmtM(lo) + '–' + fmtM(hi) + 'm' : fmtM(lo) + 'm 이상',
+          p: c / n, cum: cum / n, inside: hi <= p.R + 1e-9
+        };
+      });
+    }
+    function fmtM(v){ return Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : v.toFixed(1); }
+
+    function drawHist(bins){
+      var host = document.getElementById('hist');
+      var W = 400, H = 300, padL = 40, padR = 8, padT = 12, padB = 56;
+      var maxP = Math.max.apply(null, bins.map(function(b){ return b.p; }));
+      var yMax = Math.max(0.05, Math.ceil(maxP * 20) / 20);
+      var plotW = W - padL - padR, plotH = H - padT - padB;
+      var bw = plotW / bins.length;
+      var ink = css('--ink-soft'), grid = css('--grid'), accent = css('--accent'), miss = css('--miss');
+
+      var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="거리별 착지 비율 막대그래프">';
+      for (var k = 0; k <= 4; k++){
+        var gv = yMax * k / 4, gy = padT + plotH - gv / yMax * plotH;
+        svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + gy + '" y2="' + gy + '" stroke="' + grid + '" stroke-width="1"/>';
+        svg += '<text x="' + (padL - 6) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="11" fill="' + ink + '" font-family="IBM Plex Mono, monospace">' + Math.round(gv * 100) + '%</text>';
+      }
+      var boundaryX = null;
+      bins.forEach(function(b, i){
+        var x = padL + i * bw + 1, w = bw - 2;
+        var h = b.p / yMax * plotH, y = padT + plotH - h;
+        var r = Math.min(4, w / 2, h);
+        svg += '<path data-i="' + i + '" d="' + roundTop(x, y, w, h, r) + '" fill="' + (b.inside ? accent : miss) + '"/>';
+        svg += '<rect data-i="' + i + '" x="' + (padL + i * bw) + '" y="' + padT + '" width="' + bw + '" height="' + plotH + '" fill="transparent" class="hit"/>';
+        svg += '<text x="' + (padL + i * bw + bw / 2) + '" y="' + (H - padB + 14) + '" text-anchor="end" font-size="10" fill="' + ink + '" font-family="IBM Plex Mono, monospace" transform="rotate(-40 ' + (padL + i * bw + bw / 2) + ' ' + (H - padB + 14) + ')">' + b.label + '</text>';
+        if (b.inside) boundaryX = padL + (i + 1) * bw;
+      });
+      if (boundaryX !== null){
+        svg += '<line x1="' + boundaryX + '" x2="' + boundaryX + '" y1="' + padT + '" y2="' + (padT + plotH) + '" stroke="' + ink + '" stroke-width="1.5" stroke-dasharray="4 4"/>';
+      }
+      svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + (padT + plotH) + '" y2="' + (padT + plotH) + '" stroke="' + ink + '" stroke-width="1"/>';
+      svg += '</svg><div class="tip" id="histTip" hidden></div>';
+      host.innerHTML = svg;
+
+      var tip = document.getElementById('histTip');
+      host.querySelectorAll('rect.hit').forEach(function(rect){
+        rect.addEventListener('mousemove', function(e){
+          var b = bins[+rect.getAttribute('data-i')];
+          tip.textContent = b.label + ' · ' + pct(b.p) + ' (누적 ' + pct(b.cum) + ')';
+          var hb = host.getBoundingClientRect();
+          tip.style.left = Math.min(e.clientX - hb.left + 12, hb.width - 180) + 'px';
+          tip.style.top = (e.clientY - hb.top - 30) + 'px';
+          tip.hidden = false;
+        });
+        rect.addEventListener('mouseleave', function(){ tip.hidden = true; });
+      });
+    }
+    function roundTop(x, y, w, h, r){
+      if (h <= 0) return '';
+      return 'M' + x + ',' + (y + h) + 'V' + (y + r) + 'Q' + x + ',' + y + ' ' + (x + r) + ',' + y +
+        'H' + (x + w - r) + 'Q' + (x + w) + ',' + y + ' ' + (x + w) + ',' + (y + r) + 'V' + (y + h) + 'Z';
+    }
+
+    function renderDistTable(bins, p){
+      var g = p.germ / 100;
+      var html = '<thead><tr><th>목표 중심과의 거리</th><th>착지 확률</th><th>누적 확률</th><th>발아까지 확률</th><th>구분</th></tr></thead><tbody>';
+      bins.forEach(function(b){
+        html += '<tr><td>' + b.label + '</td><td>' + pct(b.p) + '</td><td>' + pct(b.cum) + '</td><td>' + pct(b.p * g) + '</td><td style="font-family:inherit">' + (b.inside ? '목표 안' : '목표 밖') + '</td></tr>';
+      });
+      document.getElementById('distTable').innerHTML = html + '</tbody>';
+    }
+
+    function renderWindTable(p){
+      var speeds = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      var nearest = speeds.reduce(function(a, b){ return Math.abs(b - p.U) < Math.abs(a - p.U) ? b : a; });
+      var g = p.germ / 100;
+      var html = '<thead><tr><th>평균 풍속</th><th>평균 표류 거리</th><th>목표 착지 확률</th><th>최종 성공 확률</th><th>예상 성공 씨앗</th></tr></thead><tbody>';
+      speeds.forEach(function(u, i){
+        var q = Object.assign({}, p, { U: u });
+        var s = simulate(q, N_WIND, 1000 + i);
+        html += '<tr' + (u === nearest ? ' class="current"' : '') + '><td>' + u + ' m/s</td><td>' + (u * s.t).toFixed(1) + ' m</td><td>' + pct(s.pLand) + '</td><td>' + pct(s.pLand * g) + '</td><td>' + Math.round(p.nSeeds * s.pLand * g) + '개</td></tr>';
+      });
+      document.getElementById('windTable').innerHTML = html + '</tbody>';
+    }
+
+    function run(){
+      var p = readParams();
+      var sim = simulate(p, N, 42);
+      var g = p.germ / 100;
+      var final = sim.pLand * g;
+
+      document.getElementById('pLand').textContent = pct(sim.pLand);
+      document.getElementById('pGerm').textContent = pct(g, 0);
+      document.getElementById('pFinal').textContent = pct(final);
+      document.getElementById('expected').textContent = Math.round(p.nSeeds * final) + '개';
+      document.getElementById('expectedSub').textContent = '씨앗 ' + p.nSeeds + '개 중';
+
+      var drift = p.U * sim.t;
+      document.getElementById('physics').innerHTML =
+        '낙하 시간 = 고도 ÷ 낙하 속도 = ' + p.h + ' ÷ ' + p.vt + ' = <b>' + sim.t.toFixed(1) + '초</b> · ' +
+        '평균 표류 거리 = 풍속 × 낙하 시간 = ' + p.U + ' × ' + sim.t.toFixed(1) + ' = <b>' + drift.toFixed(1) + 'm</b>' +
+        (p.aim ? ' · 그래서 목표보다 바람 쪽으로 <b>' + drift.toFixed(1) + 'm</b> 앞에서 방출합니다.' : ' · 조준 보정을 끄면 착지 중심이 이만큼 바람 방향으로 밀립니다.');
+
+      drawScatter(sim, p);
+      var bins = distBins(sim, p);
+      drawHist(bins);
+      renderDistTable(bins, p);
+      renderWindTable(p);
+    }
+
+    document.getElementById('runBtn').addEventListener('click', run);
+    document.getElementById('resetBtn').addEventListener('click', function(){
+      fieldIds.forEach(function(id){ els[id].value = defaults[id]; });
+      aimEl.checked = true;
+      run();
+    });
+    fieldIds.forEach(function(id){
+      els[id].addEventListener('keydown', function(e){ if (e.key === 'Enter') run(); });
+    });
+    aimEl.addEventListener('change', run);
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', run);
+
+    run();
+  })();
+</script>
+
+</body>
+</html>
